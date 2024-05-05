@@ -23,5 +23,7 @@ void __gabe_start()
     ASSERT(1 == 1, "check one is one");
 
     DBG_MSG(INFO, "Info test");
+    DBG_MSG(WARN, "Warn test");
+    DBG_MSG(ERRO, "Error test");
 }
 

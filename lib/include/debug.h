@@ -29,18 +29,18 @@
  * @param cond Condition to assert TRUE
  * @param s    String to log on assertion pass/fail
  */
-#define ASSERT(cond, s)           \
-    do {                          \
-        if (cond) {               \
-            GREEN;                \
+#define ASSERT(cond, s)          \
+    do {                         \
+        if (cond) {              \
+            GREEN;               \
             printf("[  OK  ]    %s\n", s); \
-            RESET;                \
-        } else {                  \
-            char buf[100];        \
-            sprintf(buf, "Failed assertion! '%s'", s);   \
-                                  \
-            DBG_MSG(ERRO, buf);   \
-        }                         \
+            RESET;               \
+        } else {                 \
+            char buf[100];       \
+            sprintf(buf, "Failed assertion! '%s'", s); \
+                                 \
+            DBG_MSG(ERRO, buf);  \
+        }                        \
     } while (0)
 
 /*
@@ -53,20 +53,20 @@
     do {                         \
         switch(level) {          \
         case INFO:               \
-            printf("[ INFO ]    %s\n", s);   \
+            printf("[ INFO ]    %s\n", s); \
             break;               \
         case ERRO:               \
             RED;                 \
-            printf("[ ERRO ]    %s\n", s);   \
+            printf("[ ERRO ]    %s\n", s); \
             RESET;               \
             break;               \
         case WARN:               \
             YELLOW;              \
-            printf("[ WARN ]    %s\n", s);   \
+            printf("[ WARN ]    %s\n", s); \
             RESET;               \
             break;               \
         case VERB:               \
-            printf("[ VERB ]    %s\n", s);   \
+            printf("[ VERB ]    %s\n", s); \
             break;               \
         }                        \
     } while (0)
