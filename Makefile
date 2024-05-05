@@ -22,7 +22,7 @@ LOBJ := $(BIN)/$(LIBGABE)/*.o
 all: clean build run
 
 clean:
-	rm -rf $(OBJ) $(LOBJ) $(LIB)/$(LIBGABE)
+	rm -rf $(OBJ) $(LOBJ) $(LIB)/$(LIBGABE).a
 
 lib: 
 	$(CC) -c $(LIBTARGETS) $(LFLAGS)

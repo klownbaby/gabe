@@ -12,9 +12,9 @@
 #include <unistd.h>
 
 #define INFO    0
-#define ERR     1
+#define ERRO    1
 #define WARN    2
-#define VERBOSE 3
+#define VERB    3
 
 #define RED     printf("\033[1;31m")
 #define GREEN   printf("\033[1;32m")
@@ -25,20 +25,20 @@
     do {                         \
         switch(level) {          \
         case INFO:               \
-            printf("[ INFO ] %s\n", s);   \
-            break;                  \
-        case ERR:                \
+            printf("[ INFO ]    %s\n", s);   \
+            break;               \
+        case ERRO:                \
             RED;                 \
-            printf("[ ERROR ] %s\n", s);   \
+            printf("[ ERRO ]    %s\n", s);   \
             RESET;               \
             break;               \
         case WARN:               \
-            YELLOW;               \
-            printf("[ WARN ] %s\n", s);   \
+            YELLOW;              \
+            printf("[ WARN ]    %s\n", s);   \
             RESET;               \
             break;               \
-        case VERBOSE:            \
-            printf("[ VERBOSE ]");\
+        case VERB:            \
+            printf("[ VERB ]    %s\n", s);   \
             break;               \
         }                        \
     } while (0);
