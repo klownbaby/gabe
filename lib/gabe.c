@@ -18,9 +18,9 @@
  */
 void __gabe_start()
 {
-    printf("Starting gabe...\n\n");
+    printf("\nStarting gabe...\n\n");
 
-    ASSERT(1 == 2, "check one is one");
+    ASSERT(1 == 1, "check one is one");
 
     DBG_MSG(INFO, "Info test");
 }
