@@ -21,13 +21,27 @@
 #define YELLOW  printf("\033[1;33m")
 #define RESET   printf("\033[0m")
 
+#define ASSERT(cond, s)           \
+    do {                          \
+        if (cond) {               \
+            GREEN;                \
+            printf("[  OK  ]    %s\n", s); \
+            RESET;                \
+        } else {                  \
+            char buf[100];        \
+            sprintf(buf, "Failed assertion! '%s'", s);   \
+                                  \
+            DBG_MSG(ERRO, buf);   \
+        }                         \
+    } while (0)
+
 #define DBG_MSG(level, s)        \
     do {                         \
         switch(level) {          \
         case INFO:               \
             printf("[ INFO ]    %s\n", s);   \
             break;               \
-        case ERRO:                \
+        case ERRO:               \
             RED;                 \
             printf("[ ERRO ]    %s\n", s);   \
             RESET;               \
@@ -37,8 +51,8 @@
             printf("[ WARN ]    %s\n", s);   \
             RESET;               \
             break;               \
-        case VERB:            \
+        case VERB:               \
             printf("[ VERB ]    %s\n", s);   \
             break;               \
         }                        \
-    } while (0);
+    } while (0)
