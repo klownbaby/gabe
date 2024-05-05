@@ -6,3 +6,7 @@
  * You should have received a copy of the MIT license with
  * this file. If not, please write to: , or visit :
  */
+
+#pragma once
+
+void __gabe_start();

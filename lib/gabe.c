@@ -7,6 +7,16 @@
  * this file. If not, please write to: , or visit :
  */
 
-#pragma once
+#include <stdio.h>
+#include "debug.h"
 
-void gary();
+void __gabe_start()
+{
+    printf("kabe init.\n");
+
+    DBG_MSG(INFO, "Info test")
+    DBG_MSG(ERR, "Error test")
+    DBG_MSG(WARN, "Warn test")
+}
+
+

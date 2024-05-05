@@ -7,14 +7,11 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include <stdio.h>
-#include "libgary.h"
+#include "libgabe.h"
 
 int main()
 {
-    printf("gary init\n");
-
-    gary();
+    __gabe_start();
 
     return 0;
 }
