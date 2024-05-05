@@ -10,6 +10,12 @@
 #include <stdio.h>
 #include "debug.h"
 
+/*
+ * @brief This will initialize all emulated hardware,
+ * assuming a cartridge is loaded.
+ *
+ * So make sure to load one...
+ */
 void __gabe_start()
 {
     printf("Starting gabe...\n\n");

@@ -24,7 +24,7 @@
 int main()
 {
     /* 
-     * This  will initialize all emulated hardware, assuming 
+     * This will initialize all emulated hardware, assuming 
      * a cartridge is loaded.
      *
      * So make sure to load one...
