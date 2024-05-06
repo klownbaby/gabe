@@ -7,7 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include "libgabe.h"
+#include "gabe.h"
 
 /*
  * This is intended to be the "frontend" layer for gabe.
@@ -29,7 +29,6 @@ int main()
      *
      * So make sure to load one...
      */
-    __gabe_start();
-
-    return 0;
+    gabeinit();
+    teardown(0);
 }

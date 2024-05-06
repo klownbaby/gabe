@@ -9,4 +9,7 @@
 
 #pragma once
 
-void __gabe_start();
+#include <stdint.h>
+
+void gabeinit();
+void teardown(uint8_t status);

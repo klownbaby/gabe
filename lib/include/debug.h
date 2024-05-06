@@ -10,6 +10,8 @@
 #pragma once
 
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Levels of debug messages */
 #define INFO    0
@@ -40,6 +42,7 @@
             sprintf(buf, "Failed assertion! '%s'", s); \
                                  \
             DBG_MSG(ERRO, buf);  \
+            teardown(1);          \
         }                        \
     } while (0)
 

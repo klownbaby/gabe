@@ -30,7 +30,7 @@ lib:
 	ar -rc $(LIB)/$(LIBGABE).a $(LOBJ)
 
 build: lib
-	$(CC) $(TARGETS) $(CFLAGS) $(LIB)/$(LIBGABE).a -lgcc
+	$(CC) $(TARGETS) $(CFLAGS) $(LIB)/$(LIBGABE).a
 
 run:
 	./$(BIN)/$(EMU)
