@@ -48,8 +48,7 @@ void gabeinit()
     /* Set context to default state */
     ctxinit(&ctx);
 
-    ASSERT(sizeof(ctx) == sizeof(context_t), 
-           "check context initialized properly");
+    ASSERT(ctx.running, "check context initialized properly");
 }
 
 

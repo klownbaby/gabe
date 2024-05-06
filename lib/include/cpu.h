@@ -22,9 +22,8 @@ typedef struct {
     /* Keep track of cylce count */
     uint32_t cycles;
 
-    /* CPU registers */
+    /* CPU register definitions */
     struct {
-        /* 16 bit registers */
         uint16_t af;        /* < Accumulator and flags */
         uint16_t sp;        /* < Stack pointer */
         uint16_t pc;        /* < Program counter */
@@ -63,7 +62,6 @@ typedef struct {
 } cpu_t;
 
 typedef struct {
-    /* CPU context */
     cpu_t cpu; 
     bool running;
 } context_t;
