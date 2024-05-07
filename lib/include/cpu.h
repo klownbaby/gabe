@@ -12,7 +12,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/*
+ * @brief Checks whether a CPU flag is enabled or
+ * disabled by masking the flag register
+ *
+ * @param flag The flag (bit) to check
+ */
 #define CPU_FLAG_CHECK(flag, ...)
+
+/* Define register macros for readability */
+#define REG8    uint8_t
+#define REG16   uint16_t
 
 /*
  * @brief Structure for holding all emulator-related
@@ -24,44 +34,31 @@ typedef struct {
 
     /* CPU register definitions */
     struct {
-        uint16_t af;        /* < Accumulator and flags */
-        uint16_t sp;        /* < Stack pointer */
-        uint16_t pc;        /* < Program counter */
+        /* General purpose registers */
+        REG8 a;
+        REG8 f;          /* < Flags */
+        REG8 b;
+        REG8 c;
+        REG8 d;
+        REG8 e;
+        REG8 h;
+        REG8 l;
 
-        /* 16 bit (8 bit optional) registers */
-        union 
-        {
-            struct {
-                uint8_t _b;
-                uint8_t _c;
-            };
-
-            uint16_t all;
-        } bc;
-
-        union 
-        {
-            struct {
-                uint8_t _d;
-                uint8_t _e;
-            };
-
-            uint16_t all;
-        } de;
-
-        union 
-        {
-            struct {
-                uint8_t _h;
-                uint8_t _l;
-            };
-
-            uint16_t all;
-        } hl;
+        /* Word-sized special registers */
+        REG16 sp;        /* < Stack pointer */
+        REG16 pc;        /* < Program counter */
     } regs;
+
+    uint16_t fetched;
+    uint16_t mdest;
+
+    uint8_t opcode;
+
+    bool halted;
 } cpu_t;
 
 typedef struct {
     cpu_t cpu; 
+
     bool running;
 } context_t;
