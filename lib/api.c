@@ -9,8 +9,7 @@
 
 #include "debug.h"
 #include "types.h"
-#include "lgabe.h"
-#include "cpu.h"
+#include "gabeapi.h"
 
 /* Initialize static global emulator context */
 static context_t ctx;
@@ -42,7 +41,7 @@ static void ctxfree(context_t* ctx)
  *
  * So make sure to load one...
  */
-void gabeinit()
+GABE_API void gabeinit()
 {
     printf("\nStarting gabe...\n\n");
 
@@ -59,7 +58,7 @@ void gabeinit()
  *
  * @param status Exit status of gabe
  */
-void teardown(uint8_t status)
+GABE_API void teardown(uint8_t status)
 {
     printf("\nExiting gabe... ");
 
