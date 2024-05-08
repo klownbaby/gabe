@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <stdbool.h>
+#include "types.h"
 
 /*
  * @brief Checks whether a CPU flag is enabled or
@@ -18,47 +18,31 @@
  *
  * @param flag The flag (bit) to check
  */
-#define CPU_FLAG_CHECK(flag, ...)
-
-/* Define register macros for readability */
-#define REG8    uint8_t
-#define REG16   uint16_t
+#define CPU_CHECK_FLAG(flag, ...)
 
 /*
- * @brief Structure for holding all emulator-related
- * context for use throughout gabe
+ * @brief Checks whether a CPU flag is enabled or
+ * disabled by masking the flag register
+ *
+ * @param flag The flag (bit) to check
  */
-typedef struct {
-    /* Keep track of cylce count */
-    uint32_t cycles;
+#define GET_REGS(ctx) \
+    REG8 a = ctx->cpu.regs.a; \
+    REG8 b = ctx->cpu.regs.b; \
+    REG8 c = ctx->cpu.regs.c; \
+    REG8 d = ctx->cpu.regs.d; \
+    REG8 e = ctx->cpu.regs.e; \
+    REG8 f = ctx->cpu.regs.f; \
+    REG8 h = ctx->cpu.regs.h; \
+    REG8 l = ctx->cpu.regs.l; \
+    REG16 sp = ctx->cpu.regs.sp; \
+    REG16 pc = ctx->cpu.regs.pc; \
 
-    /* CPU register definitions */
-    struct {
-        /* General purpose registers */
-        REG8 a;
-        REG8 f;          /* < Flags */
-        REG8 b;
-        REG8 c;
-        REG8 d;
-        REG8 e;
-        REG8 h;
-        REG8 l;
+/*
+ * @brief Increment the program counter given a 
+ * cpu context
+ */
+#define INC_PC \
+    ctx->cpu.regs.pc ++
 
-        /* Word-sized special registers */
-        REG16 sp;        /* < Stack pointer */
-        REG16 pc;        /* < Program counter */
-    } regs;
-
-    uint16_t fetched;
-    uint16_t mdest;
-
-    uint8_t opcode;
-
-    bool halted;
-} cpu_t;
-
-typedef struct {
-    cpu_t cpu; 
-
-    bool running;
-} context_t;
+CALLBACK nop(context_t* ctx);

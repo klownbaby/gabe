@@ -11,5 +11,9 @@
 
 #include <stdint.h>
 
-void gabeinit();
-void teardown(uint8_t status);
+/* Most likely will full implment this later */
+#define GABE_API 
+
+/* Define all API calls */
+GABE_API void gabeinit();
+GABE_API void teardown(uint8_t status);

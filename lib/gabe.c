@@ -8,8 +8,9 @@
  */
 
 #include "debug.h"
-#include "cpu.h"
+#include "types.h"
 #include "lgabe.h"
+#include "cpu.h"
 
 /* Initialize static global emulator context */
 static context_t ctx;
