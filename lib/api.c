@@ -43,14 +43,16 @@ static void ctxfree(context_t* ctx)
  */
 GABE_API void gabeinit()
 {
-    printf("\nStarting gabe...\n\n");
+    DBG_MSG(INFO, "Starting gabe...");
 
     /* Set context to default state */
     ctxinit(&ctx);
 
+    /* Read header info from ROM */
+    read_cart_info("test.rom", &ctx.header);
+
     ASSERT(ctx.running, "check context initialized properly");
 }
-
 
 /*
  * @brief Teardown and cleanup any dangling pointers
@@ -60,12 +62,10 @@ GABE_API void gabeinit()
  */
 GABE_API void teardown(uint8_t status)
 {
-    printf("\nExiting gabe... ");
+    DBG_MSG(INFO, "Exiting gabe... ");
 
     /* Free any danlging pointers */
     ctxfree(&ctx);
-
-    printf("done\n");
 
     /* Finally, exit gracefully */
     exit(status);

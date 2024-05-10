@@ -17,6 +17,7 @@
 #define REG8    uint8_t
 #define REG16   uint16_t
 
+
 typedef struct {
     /* General purpose registers */
     REG8 a;
@@ -46,20 +47,57 @@ typedef struct {
 
     uint16_t fetched;
     uint16_t mdest;
-
+    
+    /* Current opcode */
     uint8_t opcode;
 
+    /* Is the emulator paused (halted)? */
     bool halted;
 } cpu_t;
+
+/*
+ * @brief Contains cartridge header info read 
+ * from ROM
+ */
+typedef struct {
+    /* Entry and logo */
+    uint8_t entry[4];
+    uint8_t logo[48];
+
+    /* Game title */
+    char title[16];
+
+    /* New licensee code */
+    uint16_t nlic;
+
+    /* Other important cart info */
+    uint8_t f_sgb;
+    uint8_t type;
+    uint8_t rom_size;
+    uint8_t ram_size;
+    uint8_t dest;
+    uint8_t lic;
+    uint8_t version;
+
+    /* Checksums (standard and global) */
+    uint8_t checksum;
+    uint8_t g_checksum;
+} cart_header_t;
 
 /*
  * @brief Structure for holding global emulator-related
  * context for use throughout gabe
  */
 typedef struct {
+    /* All cpu context is stored seperately */
     cpu_t cpu; 
 
+    /* Cartridge header info */
+    cart_header_t header;
+
+    /* Memory map */
     uint16_t* rbanks[10];
+    uint16_t* rom;
     uint16_t* vram;
     uint16_t* exram;
     uint16_t* wram;
@@ -68,6 +106,7 @@ typedef struct {
     uint16_t* io;
     uint16_t* hram;
 
+    /* Emulator state flags */
     bool interrupt_enable;
     bool running;
 } context_t;

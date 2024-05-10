@@ -10,6 +10,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "types.h"
 
 /* Most likely will full implment this later */
 #define GABE_API 
@@ -17,3 +18,5 @@
 /* Define all API calls */
 GABE_API void gabeinit();
 GABE_API void teardown(uint8_t status);
+
+GABE_API void read_cart_info(char* filename, cart_header_t* buf);

@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /* Levels of debug messages */
 #define INFO    0
