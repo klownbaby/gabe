@@ -48,9 +48,9 @@ GABE_API void gabeinit()
     ctxinit(&ctx);
 
     /* Read header info from ROM */
-    read_cart_info("test.rom", &ctx.header);
+    read_cart_info("./roms/dmg-acid2.gb", &ctx.header);
 
-    ASSERT(ctx.running, "check context initialized properly");
+    ASSERT(ctx.running, "Context initialized properly");
 }
 
 /*

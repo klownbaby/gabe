@@ -31,13 +31,13 @@ static void read_file(char* filename, void* buf, size_t size)
     fp = fopen(filename, "r");
 
     /* Make sure file exists on disk before reading */
-    ASSERT(fp != NULL, "check file exists");
+    ASSERT(fp != NULL, "File exists");
 
     /* Read file into buffer given size */
     status = fread(buf, size, 1, fp);
 
     /* Make sure status is succussful from file read */
-    ASSERT(status == 0, "check fread status is successful");
+    ASSERT(status == 0, "Status of fread() is zero");
     
     /* Finally, flush the file pointer */
     fclose(fp);
@@ -77,5 +77,5 @@ void read_cart_info(char* filename, cart_header_t* header)
     read_file(filename, (void *) header, sizeof(cart_header_t));
 
     /* Make sure checksum validation passes */
-    ASSERT(header->rom_size <= 0x54, "check header checksum is valid");
+    ASSERT(header->rom_size <= 0x54, "Header checksum is valid");
 }
