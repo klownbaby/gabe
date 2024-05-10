@@ -29,7 +29,7 @@ typedef struct {
     REG8 h;
     REG8 l;
 
-    /* Word-sized special registers */
+    /* Word-sized 'special' registers */
     REG16 sp;        /* < Stack pointer */
     REG16 pc;        /* < Program counter */
 } registers_t;
