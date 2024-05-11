@@ -13,10 +13,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define CALLBACK __attribute__((access (read_only, 1))) void
+
 /* Define register macros for readability */
 #define REG8    uint8_t
 #define REG16   uint16_t
 
+#define OPTIONAL __attribute__((used))
 
 typedef struct {
     /* General purpose registers */
@@ -112,5 +115,4 @@ typedef struct {
 } context_t;
 
 /* Formatting these as macros for readability */
-typedef void (*CALLBACKFP)(context_t* ctx);
-typedef void CALLBACK;
+typedef CALLBACK (*CALLBACKFP)(context_t* ctx);

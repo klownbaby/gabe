@@ -38,11 +38,11 @@
             printf("[  OK  ]    %s\n", s); \
             RESET;               \
         } else {                 \
-            char buf[100];       \
-            sprintf(buf, "Failed assertion! '%s'", s); \
-                                 \
-            DBG_MSG(ERRO, buf);  \
-            teardown(1);          \
+            RED;                 \
+            printf("[ FAIL ]    Failed assertion! '%s'", s); \
+            RESET;               \
+            printf(" %s:%d\n", __FILE__, __LINE__); \
+            teardown(1);         \
         }                        \
     } while (0)
 

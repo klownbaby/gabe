@@ -8,6 +8,7 @@
  */
 
 #include "debug.h"
+#include "cpu.h"
 #include "gabeapi.h"
 
 /* Initialize static global emulator context */

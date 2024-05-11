@@ -15,7 +15,7 @@
  *
  * @param ctx Emulator context
  */
-__attribute__((used)) static void register_dump(context_t* ctx)
+OPTIONAL static void register_dump(context_t* ctx)
 {
     GET_REGS(ctx);
 

@@ -50,7 +50,7 @@ static void read_file(char* filename, void* buf, size_t size)
  * @param header Buffer containing valid cartridge data
  * @param rom Pointer to rom data
  */
-__attribute__((used)) static bool verify_checksum(cart_header_t* header, uint8_t* rom)
+OPTIONAL static bool verify_checksum(cart_header_t* header, uint8_t* rom)
 {
     /* Initialize checksum to zero */
     uint8_t checksum = header->checksum;
