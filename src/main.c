@@ -7,6 +7,8 @@
  * this file. If not, please write to: , or visit :
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "gabe.h"
 
 /*
@@ -21,14 +23,18 @@
  * See libgabe docs for more info (if I have gotten around
  * to writing them yet lol).
  */
-int main()
+int main(int argc, char** argv)
 {
-    /* 
-     * This will initialize all emulated hardware, assuming 
-     * a cartridge is loaded.
-     *
-     * So make sure to load one...
-     */
-    gabeinit();
+    if (argc < 2)
+    {
+        printf("ROM file required!\n");
+        exit(1);
+    }
+
+    /* Get rom file name from args */
+    char* romfile = argv[1];
+
+    /* Init and teardown */
+    gabeinit(romfile);
     teardown(0);
 }

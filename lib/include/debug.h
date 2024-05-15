@@ -10,8 +10,8 @@
 #pragma once
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include "core.h"
 
 /* Levels of debug messages */
 #define INFO    0
@@ -41,7 +41,7 @@
             RED;                 \
             printf("[ FAIL ]    Failed assertion! '%s'", s); \
             RESET;               \
-            printf(" %s:%d\n", __FILE__, __LINE__); \
+            printf(" @ %s:%d\n", __FILE__, __LINE__); \
             teardown(1);         \
         }                        \
     } while (0)

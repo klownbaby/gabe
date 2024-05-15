@@ -7,9 +7,10 @@
  * this file. If not, please write to: , or visit :
  */
 
+#include <stdlib.h>
 #include "debug.h"
-#include "cpu.h"
-#include "gabeapi.h"
+#include "cart.h"
+#include "core.h"
 
 /* Initialize static global emulator context */
 static context_t ctx;
@@ -41,7 +42,7 @@ static void ctxfree(context_t* ctx)
  *
  * So make sure to load one...
  */
-GABE_API void gabeinit()
+void gabeinit(char* romfile)
 {
     DBG_MSG(INFO, "Starting gabe...");
 
@@ -49,7 +50,7 @@ GABE_API void gabeinit()
     ctxinit(&ctx);
 
     /* Read header info from ROM */
-    read_cart_info("./roms/dmg-acid2.gb", &ctx.header);
+    read_cart_info(romfile, &ctx.header);
 
     ASSERT(ctx.running, "Context initialized properly");
 }
@@ -60,7 +61,7 @@ GABE_API void gabeinit()
  *
  * @param status Exit status of gabe
  */
-GABE_API void teardown(uint8_t status)
+void teardown(uint8_t status)
 {
     DBG_MSG(INFO, "Exiting gabe... ");
 

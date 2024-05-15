@@ -10,6 +10,13 @@
 #pragma once
 
 #include <stdint.h>
+#include "types.h"
 
-void gabeinit(char* romfile);
-void teardown(uint8_t status);
+/* Most likely will full implment this later */
+#define GABE_API __attribute__((used))
+
+/* Define all API calls */
+GABE_API void gabeinit(char* romfile);
+GABE_API void teardown(uint8_t status);
+
+GABE_API cart_header_t* read_cart_header();

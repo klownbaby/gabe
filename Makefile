@@ -1,6 +1,6 @@
-# A shitty Makefile for building GABE
 # (c) Kevin Kleiman, 2024
-
+# A shitty Makefile for building GABE
+#
 SRC := src
 LIB := lib
 INCLUDE := include
@@ -16,6 +16,9 @@ TARGETS := $(SRC)/*.c
 LIBTARGETS := $(LIB)/*.c
 OBJ := $(BIN)/*.o
 LOBJ := $(BIN)/$(LIBGABE)/*.o
+
+# Change ROM here
+TESTROM := ./roms/dmg-acid2.gb
 
 .PHONY: all clean lib build run
 
@@ -33,4 +36,4 @@ build: lib
 	$(CC) $(TARGETS) $(CFLAGS) $(LIB)/$(LIBGABE).a
 
 run:
-	./$(BIN)/$(EMU)
+	echo "\n" && ./$(BIN)/$(EMU) $(TESTROM)

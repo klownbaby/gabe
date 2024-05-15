@@ -40,7 +40,7 @@ OPTIONAL static void register_dump(context_t* ctx)
  *
  * @param ctx Emulator context
  */
-CALLBACK nop(context_t* ctx)
+callback_t nop(context_t* ctx)
 {
     INC_PC;
 }

@@ -13,8 +13,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define CALLBACK __attribute__((access (read_only, 1))) void
-
 /* Define register macros for readability */
 #define REG8    uint8_t
 #define REG16   uint16_t
@@ -74,7 +72,7 @@ typedef struct {
     uint16_t nlic;
 
     /* Other important cart info */
-    uint8_t f_sgb;
+    uint8_t cgb;
     uint8_t type;
     uint8_t rom_size;
     uint8_t ram_size;
@@ -115,4 +113,5 @@ typedef struct {
 } context_t;
 
 /* Formatting these as macros for readability */
-typedef CALLBACK (*CALLBACKFP)(context_t* ctx);
+typedef void callback_t;
+typedef callback_t (*callback_fp_t)(context_t* ctx);

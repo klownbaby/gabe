@@ -45,4 +45,4 @@
 #define INC_PC \
     ctx->cpu.regs.pc ++
 
-CALLBACK nop(context_t* ctx);
+callback_t nop(context_t* ctx);
