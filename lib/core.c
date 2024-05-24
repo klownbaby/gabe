@@ -49,8 +49,8 @@ void gabeinit(char* romfile)
     /* Set context to default state */
     ctxinit(&ctx);
 
-    /* Read header info from ROM */
-    read_cart_info(romfile, &ctx.header);
+    /* Load cartridge */
+    load_cart(&ctx, romfile);
 
     ASSERT(ctx.running, "Context initialized properly");
 }

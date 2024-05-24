@@ -47,6 +47,18 @@
     } while (0)
 
 /*
+ * @brief Rungime assertions for debug mode ONLY.
+ * Meant to improve performance of release builds
+ *
+ * @param cond Condition to assert TRUE
+ * @param s    String to log on assertion pass/fail
+ */
+#define WEAK_ASSERT(cond, s)     
+#ifdef MODE_DEBUG
+    ASSERT(cond, s)
+#endif
+
+/*
  * @brief Prints debug level message to console
  *
  * @param level Level at which to print (INFO, ERRO, WARN)

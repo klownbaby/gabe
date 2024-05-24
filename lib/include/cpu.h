@@ -43,6 +43,12 @@
  * cpu context
  */
 #define INC_PC \
-    ctx->cpu.regs.pc ++
+    ctx->cpu.regs.pc++
 
+/* Define CPU instruction callbacks */
 callback_t nop(context_t* ctx);
+
+/* Instruction callback lookup table */
+static callback_fp_t callbacks[] = {
+    [0x0] = nop
+};

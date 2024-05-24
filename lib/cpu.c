@@ -19,8 +19,8 @@ OPTIONAL static void register_dump(context_t* ctx)
 {
     GET_REGS(ctx);
 
-    printf("\n---REGISTER DUMP---\n");
     /* Display general purpose registers */
+    printf("\n---REGISTER DUMP---\n");
     printf("-------------------\n");
     printf("| General Purpose |\n");
     printf("-------------------\n");
@@ -42,5 +42,9 @@ OPTIONAL static void register_dump(context_t* ctx)
  */
 callback_t nop(context_t* ctx)
 {
+    /* 
+     * NOP instruction, we just want to increment the
+     * program counter, nothing else 
+     */
     INC_PC;
 }

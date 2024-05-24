@@ -20,7 +20,7 @@ LOBJ := $(BIN)/$(LIBGABE)/*.o
 # Change ROM here
 TESTROM := ./roms/dmg-acid2.gb
 
-.PHONY: all clean lib build run
+.PHONY: all clean lib build run gdb
 
 all: clean build run
 
@@ -34,6 +34,9 @@ lib:
 
 build: lib
 	$(CC) $(TARGETS) $(CFLAGS) $(LIB)/$(LIBGABE).a
+
+gdb: clean build
+	gdb $(BIN)/$(EMU)
 
 run:
 	echo "\n" && ./$(BIN)/$(EMU) $(TESTROM)

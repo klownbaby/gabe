@@ -11,5 +11,7 @@
 
 #include <stdint.h>
 
+#define MODE_DEBUG
+
 void gabeinit(char* romfile);
 void teardown(uint8_t status);

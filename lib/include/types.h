@@ -17,6 +17,7 @@
 #define REG8    uint8_t
 #define REG16   uint16_t
 
+/* Define optional macro for optional functions so compiler happy */
 #define OPTIONAL __attribute__((used))
 
 typedef struct {
