@@ -9,8 +9,8 @@ EMU := gabe
 LIBGABE := libgabe
 
 CC := gcc
-CFLAGS := -I $(INCLUDE) -o $(BIN)/$(EMU) -O2 -Wall -Wextra
-LFLAGS := -I $(LIB)/$(INCLUDE) -O2 -Wall -Wextra
+CFLAGS := -g -I $(INCLUDE) -o $(BIN)/$(EMU) -O2 -Wall -Wextra -Wno-unused-variable
+LFLAGS := -g -I $(LIB)/$(INCLUDE) -O2 -Wall -Wextra -Wno-unused-variable
 
 TARGETS := $(SRC)/*.c
 LIBTARGETS := $(LIB)/*.c

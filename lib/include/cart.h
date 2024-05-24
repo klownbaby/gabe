@@ -15,13 +15,15 @@
 #define CHECKSUM_START 0x0134
 #define CHECKSUM_END   0x014C
 
+#define ROM_ENTRY      0x100
+
 /* Define unkown type (macro) for type mapping */
 #define UNKNOWN        "\0"
 
 #define GET_ROM_SIZE(size) (32 << size) * 1000
 
 /* Define mapping for rom types */
-static const char* ROM_TYPES[] = {
+__attribute__((used)) static const char* ROM_TYPES[] = {
     "ROM ONLY",
     "MBC1",
     "MBC1+RAM",
@@ -60,7 +62,7 @@ static const char* ROM_TYPES[] = {
 };
 
 /* Define mapping for license codes */
-static const char* LIC_CODE[0xA5] = {
+__attribute__((used)) static const char* LIC_CODE[0xA5] = {
     [0x00] = "None",
     [0x01] = "Nintendo R&D1",
     [0x08] = "Capcom",
@@ -131,17 +133,19 @@ static const char* LIC_CODE[0xA5] = {
  * @param header Buffer containing valid header data
  */
 #define SHOW_CART_INFO(header) \
-    do {                                         \
-        printf("\n!!!Cartridge Info!!!\n\n");    \
-        printf("\tTitle: %s\n", header.title);  \
-        printf("\tNew licensee code: %s\n",      \
-               LIC_CODE[header.nlic]);          \
-        printf("\tCartridge type: %s\n",         \
-               ROM_TYPES[header.type]);         \
-        printf("\tROM size: %d\n",               \
-               GET_ROM_SIZE(header.rom_size));  \
-        printf("\tRAM size: %d\n\n",             \
-               header.ram_size);                \
+    do {                                       \
+        printf("\n--------------------\n");    \
+        printf("\n!!!Cartridge Info!!!\n");    \
+        printf("\n--------------------\n\n");  \
+        printf("\tTitle: %s\n", header.title); \
+        printf("\tNew licensee code: %s\n",    \
+               LIC_CODE[header.nlic]);         \
+        printf("\tCartridge type: %s\n",       \
+               ROM_TYPES[header.type]);        \
+        printf("\tROM size: %d\n",             \
+               GET_ROM_SIZE(header.rom_size)); \
+        printf("\tRAM size: %d\n\n",           \
+               header.ram_size);               \
     } while(0)
 
 

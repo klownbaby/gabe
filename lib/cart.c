@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "cart.h"
 #include "debug.h"
 
@@ -29,7 +30,7 @@ static void read_file(
 {
     /* Initialize file pointer */
     FILE *fp;
-    size_t read;
+    size_t read = 0;
     
     /* Open file in read mode */
     fp = fopen(filename, "r");
@@ -42,9 +43,6 @@ static void read_file(
 
     /* Read file into buffer given size */
     read = fread(buf, size, nItems, fp);
-
-    printf("read=%lu\n", read);
-    printf("size=%lu\n", size);
 
     /* Make sure status is succussful from file read */
     ASSERT(read != 0, "File read is successful");
@@ -64,17 +62,17 @@ static void read_file(
  * @param header Buffer containing valid cartridge data
  * @param rom Pointer to rom data
  */
-OPTIONAL static bool verify_checksum(cart_header_t* header, uint8_t* rom)
+OPTIONAL static bool verify_checksum(cart_header_t* header, uint16_t* rom)
 {
     /* Initialize checksum to zero */
-    uint8_t checksum = header->checksum;
+    uint16_t checksum = header->checksum;
 
     /* Loop through each word and apply checksum algo */
     for (uint16_t addr = CHECKSUM_START; addr <= CHECKSUM_END; ++addr) {
         checksum = checksum - rom[addr] - 1;
     }
 
-    return false;
+    return checksum & 0xFF;
 }
 
 /*
@@ -90,9 +88,7 @@ void read_cart_header(char* filename, cart_header_t* header)
     /* Read ROM file into header buffer from disk */
     read_file(filename, (void *) header, 
               sizeof(cart_header_t), 0x100, 1);
-
-    /* Make sure checksum validation passes */
-    ASSERT(header->rom_size <= 0x54, "Header checksum is valid");
+    
 }
 
 /*
@@ -103,12 +99,13 @@ void read_cart_header(char* filename, cart_header_t* header)
  */
 void load_cart(context_t* ctx, char* filename)
 {
+    DBG_MSG(INFO, "Loading cartridge...");
+
     /* Read header info into buffer */
     read_cart_header(filename, &ctx->header);
 
-    DBG_MSG(INFO, "Loading cartridge...");
-
-    SHOW_CART_INFO(ctx->header);
+    /* Allocate enough memory for rom on heap */
+    ctx->rom = (uint16_t *) malloc(GET_ROM_SIZE(ctx->header.rom_size));
 
     /* Read rom file into buffer */
     read_file(filename, (void *) ctx->rom,
@@ -118,4 +115,7 @@ void load_cart(context_t* ctx, char* filename)
 
     /* Ensure rom was successfully loaded into buffer */
     ASSERT(ctx->rom != NULL, "ROM pointer is not null");
+
+    /* Make sure checksum validation passes */
+    ASSERT(verify_checksum(&ctx->header, ctx->rom), "Header checksum is valid");
 }

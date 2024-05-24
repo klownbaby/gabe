@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "cart.h"
 #include "core.h"
+#include "cpu.h"
 
 /* Initialize static global emulator context */
 static context_t ctx;
@@ -23,6 +24,7 @@ static context_t ctx;
 static void ctxinit(context_t* ctx)
 {
     ctx->running = true;
+    ctx->cpu.regs.pc = ROM_ENTRY;
 }
 
 /*
@@ -33,6 +35,8 @@ static void ctxinit(context_t* ctx)
  */
 static void ctxfree(context_t* ctx)
 {
+    free(ctx->rom);
+
     ctx->running = false;
 }
 
@@ -51,6 +55,9 @@ void gabeinit(char* romfile)
 
     /* Load cartridge */
     load_cart(&ctx, romfile);
+
+    /* Begin execution */
+    cycle(&ctx);
 
     ASSERT(ctx.running, "Context initialized properly");
 }

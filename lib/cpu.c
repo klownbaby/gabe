@@ -7,44 +7,76 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include <stdio.h>
 #include "cpu.h"
 
 /*
- * @brief Prints out values of all CPU registers
+ * @brief Fetch instruction from memory for 
+ * cpu processing
  *
  * @param ctx Emulator context
  */
-OPTIONAL static void register_dump(context_t* ctx)
+static inline void fetch(context_t* ctx)
 {
     GET_REGS(ctx);
 
-    /* Display general purpose registers */
-    printf("\n---REGISTER DUMP---\n");
-    printf("-------------------\n");
-    printf("| General Purpose |\n");
-    printf("-------------------\n");
-    printf("A=%x\nF=%x\nB=%x\nC=%x\nD=%x\nE=%x\nH=%x\nL=%x\n",
-           a, f, b, c, d, e, h, l);
+    uint16_t opcode = ctx->rom[pc];
 
-    /* Dispay word-sized 'special' registers */
-    printf("-------------------\n");
-    printf("|     Special     |\n");
-    printf("-------------------\n");
-    printf("SP=0x%x\nPC=0x%x\n", sp, pc);
+    ctx->cpu.opcode = (opcode >> 8); 
+
+    printf("0x%x\n", opcode);
 }
 
 /*
- * @brief NOP instruction for Z80 CPU
- * increments program counter
+ * @brief Decode instruction from fetch for 
+ * cpu callback
  *
  * @param ctx Emulator context
  */
-callback_t nop(context_t* ctx)
+static inline void decode(context_t* ctx)
 {
-    /* 
-     * NOP instruction, we just want to increment the
-     * program counter, nothing else 
-     */
-    INC_PC;
+
+}
+
+/*
+ * @brief Execute decoded instruction
+ *
+ * @param ctx Emulator context
+ */
+static inline void execute(context_t* ctx)
+{
+
+}
+
+/*
+ * @brief Cycle cpu while emulator is running
+ *
+ * @note This is part of the main execution loop for the cpu
+ * and is arguably the most crucial part of gabe
+ *
+ * @param ctx Emulator context
+ */
+void cycle(context_t* ctx) 
+{
+    /* Fetch next instruction from ROM */
+   fetch(ctx);
+
+    /* Decode fetched instruciton into opcode */
+   decode(ctx);
+
+    /* Execute opcode */
+   execute(ctx);
+}
+
+/*
+ * @brief Loop cycles until gabe exits
+ *
+ * @param ctx Emulator context
+ */
+void begin(context_t* ctx)
+{
+    /* We want to cycle the cpu until interrupt/exit */
+    while (ctx->running) {
+        /* @see cycle() for more info */
+        cycle(ctx);
+    }
 }

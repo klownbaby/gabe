@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <stdio.h>
 #include <stdbool.h>
 #include "types.h"
 
@@ -45,10 +46,40 @@
 #define INC_PC \
     ctx->cpu.regs.pc++
 
+/*
+ * @brief Prints out values of all CPU registers
+ *
+ * @param ctx Emulator context
+ */
+OPTIONAL static inline void register_dump(context_t* ctx)
+{
+    GET_REGS(ctx);
+
+    /* Display general purpose registers */
+    printf("\n\n** Register Dump **\n\n");
+    printf("Current opcode=0x%x\n\n", 
+           ctx->cpu.opcode);
+    printf("\t-------------------\n");
+    printf("\t| General Purpose |\n");
+    printf("\t-------------------\n");
+    printf("\tA=%x\n\tF=%x\n\tB=%x\n\tC=%x\n\tD=%x\n\tE=%x\n\tH=%x\n\tL=%x\n",
+           a, f, b, c, d, e, h, l);
+
+    /* Dispay word-sized 'special' registers */
+    printf("\t-------------------\n");
+    printf("\t|     Special     |\n");
+    printf("\t-------------------\n");
+    printf("\tSP=0x%x\n\tPC=0x%x\n\n", sp, pc);
+}
+
+/* Define core cpu functions */
+void cycle(context_t* ctx);
+void begin(context_t* ctx);
+
 /* Define CPU instruction callbacks */
 callback_t nop(context_t* ctx);
 
 /* Instruction callback lookup table */
-static callback_fp_t callbacks[] = {
+__attribute__((used)) static callback_fp_t callbacks[] = {
     [0x0] = nop
 };

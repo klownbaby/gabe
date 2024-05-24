@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 /* Define register macros for readability */
-#define REG8    uint8_t
-#define REG16   uint16_t
+#define REG8    volatile uint8_t
+#define REG16   volatile uint16_t
 
 /* Define optional macro for optional functions so compiler happy */
 #define OPTIONAL __attribute__((used))
