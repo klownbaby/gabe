@@ -13,7 +13,12 @@
 #include "types.h"
 
 /* Most likely will full implment this later */
-#define GABE_API __attribute__((used))
+#define GABE_API __attribute__((ms_abi))
+
+/* Define all debug dependant api calls */
+#ifdef DEBUG
+GABE_API void cycle_strict(context_t* ctx, uint8_t cycles);
+#endif
 
 /* Define all API calls */
 GABE_API void gabeinit(char* romfile);

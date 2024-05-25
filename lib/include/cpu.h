@@ -84,7 +84,7 @@ OPTIONAL static inline void register_dump(context_t* ctx)
 
 /* Define core cpu functions */
 void cycle(context_t* ctx);
-void cycle_strict(context_t* ctx, uint8_t nCycles);
+void cycle_strict(context_t* ctx, uint8_t cycles);
 void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */

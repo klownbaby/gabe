@@ -82,10 +82,10 @@ void cycle(context_t* ctx)
  * @param ctx Emulator context
  * @param nCycles Amount of cycles to run
  */
-void cycle_strict(context_t* ctx, uint8_t nCycles)
+void cycle_strict(context_t* ctx, uint8_t cycles)
 {
     /* Decrement cycle count until zero and cycle */
-    while (nCycles--) cycle(ctx);
+    while (cycles--) cycle(ctx);
 }
 
 /*
