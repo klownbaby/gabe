@@ -29,7 +29,7 @@
  * @param opcode Opcode to lookup
  * @param ctx Emulator context
  */
-#define GET_CALLBACK(opcode, ctx) callbacks[opcode](ctx);
+#define LOOKUP_CALLBACK(opcode, ctx) callbacks[opcode](ctx);
 
 /*
  * @brief Checks whether a CPU flag is enabled or
@@ -49,7 +49,6 @@
     REG16 sp = ctx->cpu.regs.sp; \
     REG16 pc = ctx->cpu.regs.pc; \
 
-#define REG(reg) ctx->cpu.regs.reg
 /*
  * @brief Increment the program counter given a 
  * cpu context

@@ -50,7 +50,7 @@ static inline void decode(context_t* ctx)
 static inline void execute(context_t* ctx)
 {
     /* Finally, find and call opcode's respective callback */
-    GET_CALLBACK(ctx->cpu.opcode, ctx);
+    LOOKUP_CALLBACK(ctx->cpu.opcode, ctx);
 }
 
 /*
