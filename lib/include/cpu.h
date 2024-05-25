@@ -22,6 +22,16 @@
 #define CPU_CHECK_FLAG(flag, ...)
 
 /*
+ * @brief Calls an opcode's respective callback
+ * based on the function pointer stored in the 
+ * callbacks lookup table
+ *
+ * @param opcode Opcode to lookup
+ * @param ctx Emulator context
+ */
+#define GET_CALLBACK(opcode, ctx) callbacks[opcode](ctx);
+
+/*
  * @brief Checks whether a CPU flag is enabled or
  * disabled by masking the flag register
  *
@@ -39,6 +49,7 @@
     REG16 sp = ctx->cpu.regs.sp; \
     REG16 pc = ctx->cpu.regs.pc; \
 
+#define REG(reg) ctx->cpu.regs.reg
 /*
  * @brief Increment the program counter given a 
  * cpu context
@@ -74,12 +85,17 @@ OPTIONAL static inline void register_dump(context_t* ctx)
 
 /* Define core cpu functions */
 void cycle(context_t* ctx);
+void cycle_strict(context_t* ctx, uint8_t nCycles);
 void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */
-callback_t nop(context_t* ctx);
+callback_t __nop(context_t* ctx);
+callback_t __inc_a(context_t* ctx);
+callback_t __dec_b(context_t* ctx);
 
 /* Instruction callback lookup table */
-__attribute__((used)) static callback_fp_t callbacks[] = {
-    [0x0] = nop
+__attribute__((used)) static callback_fp_t callbacks[256] = {
+    [0x0] = __nop,
+    [0xc3] = __inc_a,
+    [0x50] = __dec_b
 };

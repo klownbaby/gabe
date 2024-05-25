@@ -8,6 +8,7 @@
  */
 
 #include "cpu.h"
+#include "debug.h"
 
 /*
  * @brief Fetch instruction from memory for 
@@ -17,13 +18,16 @@
  */
 static inline void fetch(context_t* ctx)
 {
+    /* Get all registers for current context */
     GET_REGS(ctx);
 
-    uint16_t opcode = ctx->rom[pc];
-
-    ctx->cpu.opcode = (opcode >> 8); 
-
-    printf("0x%x\n", opcode);
+    /*
+     * Fetch byte from rom in current emulator 
+     * context at current program counter
+     *
+     * Then, set opcode in emulator context
+     */
+    ctx->cpu.opcode = ctx->rom[pc];
 }
 
 /*
@@ -34,7 +38,8 @@ static inline void fetch(context_t* ctx)
  */
 static inline void decode(context_t* ctx)
 {
-
+    /* Ensure opcode has valid callback mapped */
+    ASSERT(callbacks[ctx->cpu.opcode] != NULL, "Opcode callback exists");
 }
 
 /*
@@ -44,7 +49,8 @@ static inline void decode(context_t* ctx)
  */
 static inline void execute(context_t* ctx)
 {
-
+    /* Finally, find and call opcode's respective callback */
+    GET_CALLBACK(ctx->cpu.opcode, ctx);
 }
 
 /*
@@ -58,17 +64,32 @@ static inline void execute(context_t* ctx)
 void cycle(context_t* ctx) 
 {
     /* Fetch next instruction from ROM */
-   fetch(ctx);
+    fetch(ctx);
 
     /* Decode fetched instruciton into opcode */
-   decode(ctx);
+    decode(ctx);
 
     /* Execute opcode */
-   execute(ctx);
+    execute(ctx);
+
+    /* Increment program counter after every instruction */
+    INC_PC;
 }
 
 /*
- * @brief Loop cycles until gabe exits
+ * @brief Cycle cpu for nCycles
+ *
+ * @param ctx Emulator context
+ * @param nCycles Amount of cycles to run
+ */
+void cycle_strict(context_t* ctx, uint8_t nCycles)
+{
+    /* Decrement cycle count until zero and cycle */
+    while (nCycles--) cycle(ctx);
+}
+
+/*
+ * @brief Cycle cpu until gabe exits
  *
  * @param ctx Emulator context
  */

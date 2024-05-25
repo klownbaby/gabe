@@ -62,7 +62,7 @@ static void read_file(
  * @param header Buffer containing valid cartridge data
  * @param rom Pointer to rom data
  */
-OPTIONAL static bool verify_checksum(cart_header_t* header, uint16_t* rom)
+OPTIONAL static bool verify_checksum(cart_header_t* header, uint8_t* rom)
 {
     /* Initialize checksum to zero */
     uint16_t checksum = header->checksum;
@@ -105,12 +105,11 @@ void load_cart(context_t* ctx, char* filename)
     read_cart_header(filename, &ctx->header);
 
     /* Allocate enough memory for rom on heap */
-    ctx->rom = (uint16_t *) malloc(GET_ROM_SIZE(ctx->header.rom_size));
+    ctx->rom = (uint8_t *) malloc(GET_ROM_SIZE(ctx->header.rom_size));
 
     /* Read rom file into buffer */
     read_file(filename, (void *) ctx->rom,
-              sizeof(uint8_t), 
-              0x0, 
+              sizeof(uint8_t), 0x0, 
               GET_ROM_SIZE(ctx->header.rom_size));
 
     /* Ensure rom was successfully loaded into buffer */

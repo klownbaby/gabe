@@ -52,14 +52,15 @@ void gabeinit(char* romfile)
 
     /* Set context to default state */
     ctxinit(&ctx);
-
     /* Load cartridge */
     load_cart(&ctx, romfile);
 
     /* Begin execution */
-    cycle(&ctx);
+    cycle_strict(&ctx, 3);
 
     ASSERT(ctx.running, "Context initialized properly");
+
+    register_dump(&ctx);
 }
 
 /*

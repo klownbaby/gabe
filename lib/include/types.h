@@ -98,15 +98,15 @@ typedef struct {
     cart_header_t header;
 
     /* Memory map */
-    uint16_t* rbanks[10];
-    uint16_t* rom;
-    uint16_t* vram;
-    uint16_t* exram;
-    uint16_t* wram;
-    uint16_t* echram;
-    uint16_t* oam;
-    uint16_t* io;
-    uint16_t* hram;
+    uint8_t* rbanks[10];
+    uint8_t* rom;
+    uint8_t* vram;
+    uint8_t* exram;
+    uint8_t* wram;
+    uint8_t* echram;
+    uint8_t* oam;
+    uint8_t* io;
+    uint8_t* hram;
 
     /* Emulator state flags */
     bool interrupt_enable;

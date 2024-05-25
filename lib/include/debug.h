@@ -30,6 +30,7 @@
  * @param cond Condition to assert TRUE
  * @param s    String to log on assertion pass/fail
  */
+#ifdef DEBUG
 #define ASSERT(cond, s)          \
     do {                         \
         if (cond) {              \
@@ -44,18 +45,26 @@
             teardown(1);         \
         }                        \
     } while (0)
+#else
+#define ASSERT(cond, s)         \
+    do {                        \
+        if (!cond) {            \
+            RED;                \
+            printf("[ FAIL ]    Failed assertion! '%s'", s); \
+            RESET;              \
+            printf(" @ %s:%d\n", __FILE__, __LINE__); \
+            teardown(1);        \
+        }                       \
+    } while (0);
+#endif
 
 /*
- * @brief Rungime assertions for debug mode ONLY.
+ * @brief Assert condition without console output
  * Meant to improve performance of release builds
  *
- * @param cond Condition to assert TRUE
- * @param s    String to log on assertion pass/fail
+ * @param cond Condition to assert
  */
-#define WEAK_ASSERT(cond, s)     
-#ifdef MODE_DEBUG
-    ASSERT(cond, s)
-#endif
+#define WEAK_ASSERT(cond) do { if (!cond) teardown(1); } while (0)
 
 /*
  * @brief Prints debug level message to console
