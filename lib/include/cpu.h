@@ -32,6 +32,16 @@
 #define LOOKUP_CALLBACK(opcode, ctx) callbacks[opcode](ctx);
 
 /*
+ * @brief Construct word sized registers
+ * from bitwise of 8 bit registers
+ */
+#define WORD_SIZE_REGS \
+    REG16 af = (a << 8) | f; \
+    REG16 bc = (b << 8) | c; \
+    REG16 de = (d << 8) | e; \
+    REG16 hl = (h << 8) | l; \
+
+/*
  * @brief Checks whether a CPU flag is enabled or
  * disabled by masking the flag register
  *
@@ -46,6 +56,7 @@
     REG8 f = ctx->cpu.regs.f; \
     REG8 h = ctx->cpu.regs.h; \
     REG8 l = ctx->cpu.regs.l; \
+    WORD_SIZE_REGS;           \
     REG16 sp = ctx->cpu.regs.sp; \
     REG16 pc = ctx->cpu.regs.pc; \
 
