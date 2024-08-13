@@ -8,3 +8,10 @@
  */
 
 #pragma once
+
+#include <stdint.h>
+
+
+/* Define bus read/write functions for mappings */
+uint8_t* bus_read(uint8_t* addr);
+void bus_write(uint8_t* addr);

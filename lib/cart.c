@@ -88,7 +88,6 @@ void read_cart_header(char* filename, cart_header_t* header)
     /* Read ROM file into header buffer from disk */
     read_file(filename, (void *) header, 
               sizeof(cart_header_t), 0x100, 1);
-    
 }
 
 /*

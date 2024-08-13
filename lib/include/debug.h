@@ -24,48 +24,7 @@
 #define YELLOW  printf("\033[1;33m")
 #define RESET   printf("\033[0m")
 
-/*
- * @brief Used for runtime assertions, not unit tests
- *
- * @param cond Condition to assert TRUE
- * @param s    String to log on assertion pass/fail
- */
 #ifdef DEBUG
-#define ASSERT(cond, s)          \
-    do {                         \
-        if (cond) {              \
-            GREEN;               \
-            printf("[  OK  ]    %s\n", s); \
-            RESET;               \
-        } else {                 \
-            RED;                 \
-            printf("[ FAIL ]    Failed assertion! '%s'", s); \
-            RESET;               \
-            printf(" @ %s:%d\n", __FILE__, __LINE__); \
-            teardown(1);         \
-        }                        \
-    } while (0)
-#else
-#define ASSERT(cond, s)         \
-    do {                        \
-        if (!cond) {            \
-            RED;                \
-            printf("[ FAIL ]    Failed assertion! '%s'", s); \
-            RESET;              \
-            printf(" @ %s:%d\n", __FILE__, __LINE__); \
-            teardown(1);        \
-        }                       \
-    } while (0);
-#endif
-
-/*
- * @brief Assert condition without console output
- * Meant to improve performance of release builds
- *
- * @param cond Condition to assert
- */
-#define WEAK_ASSERT(cond) do { if (!cond) teardown(1); } while (0)
-
 /*
  * @brief Prints debug level message to console
  *
@@ -93,3 +52,47 @@
             break;               \
         }                        \
     } while (0)
+
+/*
+ * @brief Used for runtime assertions, not unit tests
+ *
+ * @param cond Condition to assert TRUE
+ * @param s    String to log on assertion pass/fail
+ */
+#define ASSERT(cond, s)          \
+    do {                         \
+        if (cond) {              \
+            GREEN;               \
+            printf("[  OK  ]    %s\n", s); \
+            RESET;               \
+        } else {                 \
+            RED;                 \
+            printf("[ FAIL ]    Failed assertion! '%s'", s); \
+            RESET;               \
+            printf(" @ %s:%d\n", __FILE__, __LINE__); \
+            teardown(1);         \
+        }                        \
+    } while (0)
+#else
+#define ASSERT(cond, s)         \
+    do {                        \
+        if (!cond) {            \
+            RED;                \
+            printf("[ FAIL ]    Failed assertion! '%s'", s); \
+            RESET;              \
+            printf(" @ %s:%d\n", __FILE__, __LINE__); \
+            teardown(1);        \
+        }                       \
+    } while (0);
+
+#define DBG_MSG(level, s)
+#endif
+
+/*
+ * @brief Assert condition without console output
+ * Meant to improve performance of release builds
+ *
+ * @param cond Condition to assert
+ */
+#define WEAK_ASSERT(cond) do { if (!cond) teardown(1); } while (0)
+

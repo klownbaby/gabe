@@ -15,7 +15,7 @@
  * Since only instructions should be manipulating registers,
  * this is defined in the source, in order to limit misuse
  *
- * @param ctx Emulator context
+ * @param reg register to access
  */
 #define REG(reg) ctx->cpu.regs.reg
 
@@ -27,14 +27,7 @@
  */
 callback_t __nop(context_t* ctx)
 {
-    /* 
-     * NOP instruction, we just want to increment the
-     * program counter, nothing else
-     *
-     * We can map this to an actual nop instruction on native
-     * hardware
-     */
-    asm volatile ("nop");
+    (void) 0;
 }
 
 /*
