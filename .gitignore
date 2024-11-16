@@ -1,4 +1,5 @@
 .DS_Store
 bin/*.o
+bin/gabe
 bin/libgabe/*.o
 lib/libgabe.a
