@@ -17,6 +17,9 @@
 #define REG8    volatile uint8_t
 #define REG16   volatile uint16_t
 
+/* Define null type for pointer initialization */
+#define NULL    0x0
+
 /* Define optional macro for optional functions so compiler happy */
 #define OPTIONAL __attribute__((used))
 
@@ -48,7 +51,9 @@ typedef struct {
     registers_t regs;
 
     uint16_t fetched;
-    uint16_t mdest;
+
+    /* Current byte */
+    uint16_t cbyte;
     
     /* Current opcode */
     uint8_t opcode;

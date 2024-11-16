@@ -23,7 +23,7 @@
 #define GET_ROM_SIZE(size) (32 << size) * 1000
 
 /* Define mapping for rom types */
-__attribute__((used)) static const char* ROM_TYPES[] = {
+OPTIONAL static const char* ROM_TYPES[] = {
     "ROM ONLY",
     "MBC1",
     "MBC1+RAM",
@@ -62,7 +62,7 @@ __attribute__((used)) static const char* ROM_TYPES[] = {
 };
 
 /* Define mapping for license codes */
-__attribute__((used)) static const char* LIC_CODE[0xA5] = {
+OPTIONAL static const char* LIC_CODE[0xA5] = {
     [0x00] = "None",
     [0x01] = "Nintendo R&D1",
     [0x08] = "Capcom",

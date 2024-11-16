@@ -18,16 +18,13 @@
  */
 static inline void fetch(context_t* ctx)
 {
-    /* Get all registers for current context */
-    GET_REGS(ctx);
-
     /*
      * Fetch byte from rom in current emulator 
      * context at current program counter
      *
      * Then, set opcode in emulator context
      */
-    ctx->cpu.opcode = ctx->rom[pc];
+    ctx->cpu.opcode = ctx->rom[REG(pc)];
 }
 
 /*

@@ -22,6 +22,16 @@
 #define CPU_CHECK_FLAG(flag, ...)
 
 /*
+ * @brief Callback locked macro for manipulating registers
+ *
+ * Since only instructions should be manipulating registers,
+ * this is defined in the source, in order to limit misuse
+ *
+ * @param reg register to access
+ */
+#define REG(reg) ctx->cpu.regs.reg
+
+/*
  * @brief Calls an opcode's respective callback
  * based on the function pointer stored in the 
  * callbacks lookup table
@@ -65,7 +75,14 @@
  * cpu context
  */
 #define INC_PC \
-    ctx->cpu.regs.pc++
+    ++ctx->cpu.regs.pc
+
+/*
+ * @brief Increment the n times program counter 
+ * given a cpu context
+ */
+#define INC_PC_N(n) \
+    ctx->cpu.regs.pc += n
 
 /*
  * @brief Prints out values of all CPU registers
@@ -83,7 +100,7 @@ OPTIONAL static inline void register_dump(context_t* ctx)
     printf("\t-------------------\n");
     printf("\t| General Purpose |\n");
     printf("\t-------------------\n");
-    printf("\tA=%x\n\tF=%x\n\tB=%x\n\tC=%x\n\tD=%x\n\tE=%x\n\tH=%x\n\tL=%x\n",
+    printf("\tA = %x\n\tF = %x\n\tB = %x\n\tC = %x\n\tD = %x\n\tE = %x\n\tH = %x\n\tL = %x\n",
            a, f, b, c, d, e, h, l);
 
     /* Dispay word-sized 'special' registers */
@@ -100,12 +117,16 @@ void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */
 callback_t __nop(context_t* ctx);
+callback_t __ld_bc_imm16(context_t* ctx);
+callback_t __ld_pbc_a(context_t* ctx);
+callback_t __inc_bc(context_t* ctx);
 callback_t __inc_a(context_t* ctx);
 callback_t __dec_b(context_t* ctx);
 
 /* Instruction callback lookup table */
 __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x0] = __nop,
+    [0x10] = __ld_bc_imm16,
     [0xc3] = __inc_a,
     [0x50] = __dec_b
 };

@@ -116,4 +116,6 @@ void load_cart(context_t* ctx, char* filename)
 
     /* Make sure checksum validation passes */
     ASSERT(verify_checksum(&ctx->header, ctx->rom), "Header checksum is valid");
+
+    SHOW_CART_INFO(ctx->header);
 }

@@ -9,11 +9,12 @@
 
 #pragma once
 
-#include <stdint.h>
-#include "types.h"
+/* Define goto macros for success/fail conditions */
+#define GOTO_SUCCESS goto success
+#define GOTO_FAIL    goto fail
 
-#define CART_MEM_OFFSET 0x8000
+#define GOTO_SUCCESS_IF(cond) \
+    do { if (cond) goto success; } while(0)
+#define GOTO_FAIL_IF(cond)    \
+    do { if (cond) goto fail; } while(0)
 
-/* Define bus read/write functions for mappings */
-uint8_t bus_read(context_t* ctx, uint16_t addr);
-void bus_write(context_t* ctx, uint16_t addr, uint8_t byte);
