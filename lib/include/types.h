@@ -26,13 +26,14 @@
 typedef struct {
     /* General purpose registers */
     REG8 a;
-    REG8 f;          /* < Flags */
     REG8 b;
     REG8 c;
     REG8 d;
     REG8 e;
     REG8 h;
     REG8 l;
+
+    REG8 f : 4;          /* < Flags */
 
     /* Word-sized 'special' registers */
     REG16 sp;        /* < Stack pointer */

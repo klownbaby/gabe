@@ -10,7 +10,6 @@
 #include "cpu.h"
 #include "bus.h"
 
-
 /*
  * @brief Internal helper function for fetching the
  * next imeediate byte from ROM
@@ -37,6 +36,34 @@ callback_t __nop(context_t* ctx)
     return;
 }
 
+/*
+ * @brief CPU enter low power mode
+ * 
+ * This is a 2 byte instruction so
+ * we must increment the program
+ * counter once more
+ *
+ * @param ctx Emulator context
+ */
+callback_t __stop(context_t* ctx)
+{
+    /* Fetch the next byte and increment PC */
+    fetch_imm(ctx);
+}
+
+/*
+ * @brief subtract with carry immediate
+ * 8 bit value from register A
+ *
+ * @param ctx Emulator context
+ */
+callback_t __sbc_a_imm8(context_t* ctx)
+{
+    /* Fetch the next byte and increment PC */
+    fetch_imm(ctx);
+
+    REG(a) -= ctx->cpu.cbyte + CF;
+}
 
 /*
  * @brief Load BC register with 16 bit 
@@ -53,6 +80,21 @@ callback_t __ld_bc_imm16(context_t* ctx)
     /* Little endian so set LSB to B reg */
     fetch_imm(ctx);
     REG(b) = ctx->cpu.cbyte;
+}
+
+/*
+ * @brief Load the register H with
+ * the byte pointed to at register HL
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ld_h_phl(context_t* ctx)
+{
+    /* Get the pointer stored in HL register */
+    uint16_t phl = REGWORD(h, l);
+
+    /* Dereference byte at phl */
+    REG(h) = ctx->rom[phl];
 }
 
 /*

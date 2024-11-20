@@ -14,23 +14,29 @@
 #include "types.h"
 #include "debug.h"
 
-/*
- * @brief Checks whether a CPU flag is enabled or
- * disabled by masking the flag register
- *
- * @param flag The flag (bit) to check
- */
-#define CPU_CHECK_FLAG(flag, ...)
+/* Flag accessors */
+#define ZF (uint8_t)(ctx->cpu.regs.f & 0x4)
+#define NF (uint8_t)(ctx->cpu.regs.f & 0x3)
+#define HF (uint8_t)(ctx->cpu.regs.f & 0x2)
+#define CF (uint8_t)(ctx->cpu.regs.f & 0x1)
+
 
 /*
- * @brief Callback locked macro for manipulating registers
- *
- * Since only instructions should be manipulating registers,
- * this is defined in the source, in order to limit misuse
+ * @brief Callback locked macro for manipulating 8-bit 
+ * registers
  *
  * @param reg register to access
  */
 #define REG(reg) ctx->cpu.regs.reg
+
+/*
+ * @brief Callback locked macro for manipulating word-sized 
+ * registers
+ *
+ * @param high 8-bit register
+ * @param low 8-bit register
+ */
+#define REGWORD(high, low) (REG(high) << 8) | (REG(low))
 
 /*
  * @brief Calls an opcode's respective callback
@@ -118,6 +124,9 @@ void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */
 callback_t __nop(context_t* ctx);
+callback_t __stop(context_t* ctx);
+callback_t __sbc_a_imm8(context_t* ctx);
+callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
 callback_t __inc_bc(context_t* ctx);
@@ -129,6 +138,10 @@ static inline callback_t __no_impl(context_t* ctx)
 { 
     /* Dump the unimplemented opcode */
     printf("Opcode 0x%x not implemented!\n", ctx->cpu.opcode);
+
+    /* Dump out registers */
+    register_dump(ctx);
+
     /* Teardown gabe gracefully */
     teardown(2); 
 }
@@ -136,7 +149,7 @@ static inline callback_t __no_impl(context_t* ctx)
 /* Instruction callback lookup table */
 __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x00] = __nop,
-    [0x01] = __no_impl,
+    [0x01] = __stop,
     [0x02] = __no_impl,
     [0x03] = __no_impl,
     [0x04] = __no_impl,
@@ -237,7 +250,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x63] = __no_impl,
     [0x64] = __no_impl,
     [0x65] = __no_impl,
-    [0x66] = __no_impl,
+    [0x66] = __ld_h_phl,
     [0x67] = __no_impl,
     [0x68] = __no_impl,
     [0x69] = __no_impl,
@@ -372,7 +385,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xea] = __no_impl,
     [0xeb] = __no_impl,
     [0xec] = __no_impl,
-    [0xed] = __no_impl,
+    [0xed] = __sbc_a_imm8,
     [0xee] = __no_impl,
     [0xef] = __no_impl,
     [0xf0] = __no_impl,

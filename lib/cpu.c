@@ -24,7 +24,7 @@ static inline void fetch(context_t* ctx)
      *
      * Then, set opcode in emulator context
      */
-    ctx->cpu.opcode = ctx->rom[REG(pc)];
+    ctx->cpu.cbyte = ctx->cpu.opcode = ctx->rom[REG(pc)];
 }
 
 /*
