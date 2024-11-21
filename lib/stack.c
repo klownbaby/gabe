@@ -5,6 +5,7 @@
  * @brief Push a byte onto the stack
  *
  * @param ctx Emulator context
+ * @param byte byte to push onto the stack
  */
 void pushb(context_t* ctx, uint8_t byte)
 {
@@ -16,6 +17,7 @@ void pushb(context_t* ctx, uint8_t byte)
  * @brief Push a word on to the stack
  *
  * @param ctx Emulator context
+ * @param word word to push onto the stack
  */
 void pushw(context_t* ctx, uint16_t word)
 {
@@ -31,9 +33,10 @@ void pushw(context_t* ctx, uint16_t word)
  *
  * @param ctx Emulator context
  */
-void popb(context_t* ctx, uint8_t byte)
+uint8_t popb(context_t* ctx)
 {
-
+    /* Get the current byte at SP and increment */
+    return ctx->cpu.stack[REG(sp++)];
 }
 
 /*
@@ -41,7 +44,16 @@ void popb(context_t* ctx, uint8_t byte)
  *
  * @param ctx Emulator context
  */
-void popw(context_t* ctx, uint16_t word)
+uint16_t popw(context_t* ctx)
 {
+    uint16_t value = 0;
 
+    /* Get the LSB of the word and increment */
+    value = ctx->cpu.stack[REG(sp++)];
+
+    /* Get the MSB of the word and increment */
+    value |= (ctx->cpu.stack[REG(sp++)] << 8);
+
+    /* Return the full word-sized value */
+    return value;
 }

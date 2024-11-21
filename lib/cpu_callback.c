@@ -121,6 +121,22 @@ callback_t __call_zf_p16(context_t* ctx)
 }
 
 /*
+ * @brief Return from subroutine if CF
+ * is not set
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ret_nc(context_t* ctx)
+{
+    /* Check that carry flag is enabled before calling */
+    if (!CF)
+    {
+        /* Pop return address from top of stack and goto */
+        REG(pc) = popw(ctx);
+    }
+}
+
+/*
  * @brief Load BC register with 16 bit 
  * immediate
  *

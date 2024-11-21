@@ -152,6 +152,7 @@ callback_t __nop(context_t* ctx);
 callback_t __stop(context_t* ctx);
 callback_t __sbc_a_imm8(context_t* ctx);
 callback_t __call_zf_p16(context_t* ctx);
+callback_t __ret_nc(context_t* ctx);
 callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
@@ -187,7 +188,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x0a] = __no_impl,
     [0x0b] = __no_impl,
     [0x0c] = __no_impl,
-    [0x0d] = __no_impl,
+    [0x0d] = __ret_nc,
     [0x0e] = __no_impl,
     [0x0f] = __no_impl,
     [0x10] = __ld_bc_imm16,
