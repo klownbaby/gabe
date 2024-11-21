@@ -17,14 +17,24 @@
 static context_t ctx;
 
 /*
- * @brief Sets up emulator hardware context
+ * @brief Allocates necessary memory for ROM/RAM
+ * banks on the gameboy
  *
  * @param *ctx Pointer to context object
  */
-static void ctxinit(context_t* ctx)
+static void ctxalloc(context_t* ctx)
 {
-    ctx->running = true;
-    ctx->cpu.regs.pc = ROM_ENTRY;
+    /* Allocate video RAM on heap */
+    ctx->vram = malloc(EIGHTKB);
+
+    /* Allocate external RAM on heap */
+    ctx->exram = malloc(EIGHTKB);
+
+    /* Allocate echo RAM on heap */
+    ctx->echram = malloc(EIGHTKB);
+
+    /* Allocate work RAM on heap */ 
+    ctx->wram = malloc(FOURKB);
 }
 
 /*
@@ -35,9 +45,35 @@ static void ctxinit(context_t* ctx)
  */
 static void ctxfree(context_t* ctx)
 {
+    /* Free cartridge ROM allocation */
     free(ctx->rom);
 
+    /* Free video RAM allocation */
+    free(ctx->vram);
+
+    /* Free external RAM allocation */
+    free(ctx->exram);
+
+    /* Free echo RAM on allocation */
+    free(ctx->echram);
+
+    /* Free work RAM on allocation */ 
+    free(ctx->wram);
+
+    /* Set running state to false */
     ctx->running = false;
+}
+
+/*
+ * @brief Sets up emulator hardware context
+ *
+ * @param *ctx Pointer to context object
+ */
+static void ctxinit(context_t* ctx)
+{
+    /* Set state to running */
+    ctx->running = true;
+    ctx->cpu.regs.pc = ROM_ENTRY;
 }
 
 /*

@@ -15,11 +15,30 @@
 #include "debug.h"
 
 /* Flag accessors */
-#define ZF (uint8_t)(ctx->cpu.regs.f & 0x4)
-#define NF (uint8_t)(ctx->cpu.regs.f & 0x3)
-#define HF (uint8_t)(ctx->cpu.regs.f & 0x2)
+#define ZF (uint8_t)((ctx->cpu.regs.f & 0x4) >> 3)
+#define NF (uint8_t)((ctx->cpu.regs.f & 0x3) >> 2)
+#define HF (uint8_t)((ctx->cpu.regs.f & 0x2) >> 1)
 #define CF (uint8_t)(ctx->cpu.regs.f & 0x1)
 
+/* Readability macro for unset flags */
+#define NOT_SET 0
+
+/*
+ * @brief Set Z, N, H, and C flags in a single
+ * macro
+ *
+ * @param z zero flag
+ * @param n subtract flag
+ * @param h half carry flag
+ * @param c carry flag
+ */
+#define CPU_SET_FLAGS(z, n, h, c)      \
+    do {                               \
+        ctx->cpu.regs.f |= (z << 0x3); \
+        ctx->cpu.regs.f |= (n << 0x2); \
+        ctx->cpu.regs.f |= (h << 0x1); \
+        ctx->cpu.regs.f |= c;          \
+    } while(0);
 
 /*
  * @brief Callback locked macro for manipulating 8-bit 
@@ -115,6 +134,12 @@ OPTIONAL static inline void register_dump(context_t* ctx)
     printf("\t|     Special     |\n");
     printf("\t-------------------\n");
     printf("\tSP=0x%x\n\tPC=0x%x\n\n", sp, pc);
+
+    /* Dispay CPU flags */
+    printf("\t-------------------\n");
+    printf("\t|      Flags      |\n");
+    printf("\t-------------------\n");
+    printf("\tZF=%x, NF=%x, HF=%x, CF=%x\n", ZF, NF, HF, CF);
 }
 
 /* Define core cpu functions */
@@ -126,6 +151,7 @@ void begin(context_t* ctx);
 callback_t __nop(context_t* ctx);
 callback_t __stop(context_t* ctx);
 callback_t __sbc_a_imm8(context_t* ctx);
+callback_t __call_zf_p16(context_t* ctx);
 callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
@@ -352,7 +378,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xc9] = __no_impl,
     [0xca] = __no_impl,
     [0xcb] = __no_impl,
-    [0xcc] = __no_impl,
+    [0xcc] = __call_zf_p16,
     [0xcd] = __no_impl,
     [0xce] = __no_impl,
     [0xcf] = __no_impl,

@@ -18,7 +18,13 @@
 #define REG16   volatile uint16_t
 
 /* Define null type for pointer initialization */
-#define NULL    0x0
+#define NULL        0x0
+
+/* Readability macro for 4KB size */
+#define FOURKB      4096
+
+/* Readability macro for 8KB size */
+#define EIGHTKB     8192
 
 /* Define optional macro for optional functions so compiler happy */
 #define OPTIONAL __attribute__((used))

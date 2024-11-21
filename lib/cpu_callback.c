@@ -8,7 +8,7 @@
  */
 
 #include "cpu.h"
-#include "bus.h"
+#include "stack.h"
 
 /*
  * @brief Internal helper function for fetching the
@@ -23,6 +23,21 @@ static inline void fetch_imm(context_t* ctx)
     
     /* Get then ext byte and set in cpu context */
     ctx->cpu.cbyte = ctx->rom[REG(pc)];
+}
+
+/*
+ * @brief Internal helper function for handling 
+ * generic call instructions
+ *
+ * @param ctx Emulator context
+ */
+static inline void call(context_t* ctx, uint16_t addr)
+{
+    /* Push current PC to stack */
+    pushw(ctx, REG(pc));
+    
+    /* Set program counter to callee address */
+    REG(pc) = addr;
 }
 
 /*
@@ -59,10 +74,50 @@ callback_t __stop(context_t* ctx)
  */
 callback_t __sbc_a_imm8(context_t* ctx)
 {
+    uint8_t value = 0;
+
     /* Fetch the next byte and increment PC */
     fetch_imm(ctx);
 
-    REG(a) -= ctx->cpu.cbyte + CF;
+    /* Dereference the current byte */
+    value = ctx->cpu.cbyte + CF;
+
+    /* Set flags accordingly */
+    CPU_SET_FLAGS(
+        REG(a) - value == 0,
+        1,
+        ((REG(a) & 0xF) - ((ctx->cpu.cbyte & 0xF) - CF) < 0),
+        (REG(a) - (ctx->cpu.cbyte & 0xF) < 0)
+    );
+
+    /* Finally, set the value of the A register */
+    REG(a) -= value + CF;
+}
+
+/*
+ * @brief Call subroutine at 16-bit address
+ * if ZF is set
+ *
+ * @param ctx Emulator context
+ */
+callback_t __call_zf_p16(context_t* ctx)
+{
+    uint16_t addr = 0;
+
+    /* Check that zero flag is enabled before calling */
+    if (ZF)
+    {
+        /* Fetch and set least significant byte */
+        fetch_imm(ctx);
+        addr = ctx->cpu.cbyte;
+        
+        /* Fetch and set most significant byte */
+        fetch_imm(ctx);
+        addr |= (ctx->cpu.cbyte << 8);
+
+        /* Finally, jump to callee and align stack */
+        call(ctx, addr);
+    }
 }
 
 /*
@@ -123,8 +178,16 @@ callback_t __inc_bc(context_t* ctx)
  */
 callback_t __inc_a(context_t* ctx)
 {
-    /* Increment A */
+    /* Increment A register */
     ++REG(a);
+
+    /* Set flags accordingly */
+    CPU_SET_FLAGS(
+        REG(a) == 0,
+        0,
+        (REG(a) & 0xF),
+        NOT_SET
+    );
 }
 
 /*
@@ -134,6 +197,14 @@ callback_t __inc_a(context_t* ctx)
  */
 callback_t __dec_b(context_t* ctx)
 {
-    /* Decrement B */
+    /* Decrement B register */
     --REG(b);
+
+    /* Set flags accordingly */
+    CPU_SET_FLAGS(
+        REG(b) == 0,
+        1,
+        (REG(b) & 0xF) == 0xF,
+        NOT_SET
+    );
 }
