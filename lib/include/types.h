@@ -65,6 +65,9 @@ typedef struct {
     /* Current opcode */
     uint8_t opcode;
 
+    /* Reserving 4KB of stack on host stack */
+    uint8_t stack[4096];
+
     /* Is the emulator paused (halted)? */
     bool halted;
 } cpu_t;

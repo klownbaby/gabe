@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "cpu.h"
 
 /*
  * @brief Push a byte onto the stack
@@ -7,6 +8,8 @@
  */
 void pushb(context_t* ctx, uint8_t byte)
 {
+    /* Set current stack pointer to byte and decrement */
+    ctx->cpu.stack[REG(sp)--] = byte;
 }
 
 /*
@@ -16,7 +19,11 @@ void pushb(context_t* ctx, uint8_t byte)
  */
 void pushw(context_t* ctx, uint16_t word)
 {
+    /* Set LSB to current stack pointer and decrement */
+    ctx->cpu.stack[REG(sp)--] = (word & 0xF0);
 
+    /* Set MSB to current stack pointer and decrement */
+    ctx->cpu.stack[REG(sp)--] = (word & 0x0F);
 }
 
 /*
