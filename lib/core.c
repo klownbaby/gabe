@@ -92,7 +92,7 @@ void gabeinit(char* romfile)
     load_cart(&ctx, romfile);
 
     /* Begin execution */
-    cycle_strict(&ctx, 10);
+    begin(&ctx);
 
     ASSERT(ctx.running, "Context initialized properly");
 

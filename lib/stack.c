@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "bus.h"
 #include "cpu.h"
 
 /*
@@ -10,7 +11,7 @@
 void pushb(context_t* ctx, uint8_t byte)
 {
     /* Set current stack pointer to byte and decrement */
-    ctx->cpu.stack[REG(sp)--] = byte;
+    bus_write(ctx, REG(sp--), byte);
 }
 
 /*
@@ -22,10 +23,10 @@ void pushb(context_t* ctx, uint8_t byte)
 void pushw(context_t* ctx, uint16_t word)
 {
     /* Set LSB to current stack pointer and decrement */
-    ctx->cpu.stack[REG(sp)--] = (word & 0xF0);
+    bus_write(ctx, REG(sp)--, (word & 0xF0));
 
     /* Set MSB to current stack pointer and decrement */
-    ctx->cpu.stack[REG(sp)--] = (word & 0x0F);
+    bus_write(ctx, REG(sp)--, (word & 0xF));
 }
 
 /*
@@ -36,7 +37,7 @@ void pushw(context_t* ctx, uint16_t word)
 uint8_t popb(context_t* ctx)
 {
     /* Get the current byte at SP and increment */
-    return ctx->cpu.stack[REG(sp++)];
+    return bus_read(ctx, REG(sp++));
 }
 
 /*
@@ -49,10 +50,10 @@ uint16_t popw(context_t* ctx)
     uint16_t value = 0;
 
     /* Get the LSB of the word and increment */
-    value = ctx->cpu.stack[REG(sp++)];
+    value = bus_read(ctx, REG(sp++));
 
     /* Get the MSB of the word and increment */
-    value |= (ctx->cpu.stack[REG(sp++)] << 8);
+    value |= (bus_read(ctx, REG(sp++)) << 8);
 
     /* Return the full word-sized value */
     return value;

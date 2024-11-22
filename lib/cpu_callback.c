@@ -8,6 +8,7 @@
  */
 
 #include "cpu.h"
+#include "bus.h"
 #include "stack.h"
 
 /*
@@ -22,7 +23,7 @@ static inline void fetch_imm(context_t* ctx)
     INC_PC;
     
     /* Get then ext byte and set in cpu context */
-    ctx->cpu.cbyte = ctx->rom[REG(pc)];
+    ctx->cpu.cbyte = bus_read(ctx, REG(pc));
 }
 
 /*
@@ -107,17 +108,28 @@ callback_t __call_zf_p16(context_t* ctx)
     /* Check that zero flag is enabled before calling */
     if (ZF)
     {
-        /* Fetch and set least significant byte */
-        fetch_imm(ctx);
-        addr = ctx->cpu.cbyte;
-        
-        /* Fetch and set most significant byte */
-        fetch_imm(ctx);
-        addr |= (ctx->cpu.cbyte << 8);
+        /* Fetch word from memory and store in target address */
+        FETCH_WORD(addr);
 
         /* Finally, jump to callee and align stack */
         call(ctx, addr);
     }
+}
+
+/*
+ * @brief Call subroutine at 16-bit immediate address
+ *
+ * @param ctx Emulator context
+ */
+callback_t __call_imm16(context_t* ctx)
+{
+    uint16_t addr = 0;
+
+    /* Fetch word from memory and store in target address */
+    FETCH_WORD(addr);
+
+    /* Finally, jump to callee and align stack */
+    call(ctx, addr);
 }
 
 /*
@@ -128,12 +140,71 @@ callback_t __call_zf_p16(context_t* ctx)
  */
 callback_t __ret_nc(context_t* ctx)
 {
-    /* Check that carry flag is enabled before calling */
+    /* Check that carry flag is enabled before returning */
     if (!CF)
     {
         /* Pop return address from top of stack and goto */
         REG(pc) = popw(ctx);
     }
+}
+
+/*
+ * @brief Bitwise OR register A with register B
+ *
+ * @param ctx Emulator context
+ */
+callback_t __or_a_b(context_t* ctx)
+{
+    /* OR register A and B and store result in register A */
+    REG(a) |= REG(b);
+
+    /* Set zero flag if value is zero, reset all other flags */
+    CPU_SET_FLAGS(REG(a) == 0, 0, 0, 0);
+}
+
+/*
+ * @brief Jump to 16 bit address
+ *
+ * @param ctx Emulator context
+ */
+callback_t __jp_p16(context_t* ctx)
+{
+    uint16_t addr = 0;
+
+    /* Fetch word from memory and store in target address */
+    FETCH_WORD(addr);
+
+    /* Finally, jump to address */
+    REG(pc) = addr;
+}
+
+/*
+ * @brief Jump to 16 bit address stored in
+ * HL register
+ *
+ * @param ctx Emulator context
+ */
+callback_t __jp_hl(context_t* ctx)
+{
+    /* Jump to address stored in HL register */
+    REG(pc) = REGWORD(h, l);
+}
+
+/*
+ * @brief Set stack pointer to a 16 bit
+ * immediate address
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ld_sp_imm16(context_t* ctx)
+{
+    uint16_t addr = 0;
+    
+    /* Fetch word from memory and store in target address */
+    FETCH_WORD(addr);
+
+    /* Finally, set the stack pointer to the new address */
+    REG(sp) = addr;
 }
 
 /*

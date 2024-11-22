@@ -38,7 +38,16 @@
         ctx->cpu.regs.f |= (n << 0x2); \
         ctx->cpu.regs.f |= (h << 0x1); \
         ctx->cpu.regs.f |= c;          \
-    } while(0);
+    } while (0);
+
+#define FETCH_WORD(val) \
+    do {                              \
+        fetch_imm(ctx);               \
+        val = (ctx->cpu.cbyte << 8);  \
+                                      \
+        fetch_imm(ctx);               \
+        val |= (ctx->cpu.cbyte);      \
+    } while (0);
 
 /*
  * @brief Callback locked macro for manipulating 8-bit 
@@ -152,9 +161,13 @@ callback_t __nop(context_t* ctx);
 callback_t __stop(context_t* ctx);
 callback_t __sbc_a_imm8(context_t* ctx);
 callback_t __call_zf_p16(context_t* ctx);
+callback_t __call_imm16(context_t* ctx);
 callback_t __ret_nc(context_t* ctx);
+callback_t __or_a_b(context_t* ctx);
+callback_t __jp_p16(context_t* ctx);
 callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
+callback_t __ld_sp_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
 callback_t __inc_bc(context_t* ctx);
 callback_t __inc_a(context_t* ctx);
@@ -176,11 +189,11 @@ static inline callback_t __no_impl(context_t* ctx)
 /* Instruction callback lookup table */
 __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x00] = __nop,
-    [0x01] = __stop,
+    [0x01] = __ld_bc_imm16,
     [0x02] = __no_impl,
     [0x03] = __no_impl,
     [0x04] = __no_impl,
-    [0x05] = __no_impl,
+    [0x05] = __dec_b,
     [0x06] = __no_impl,
     [0x07] = __no_impl,
     [0x08] = __no_impl,
@@ -188,10 +201,10 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x0a] = __no_impl,
     [0x0b] = __no_impl,
     [0x0c] = __no_impl,
-    [0x0d] = __ret_nc,
+    [0x0d] = __no_impl,
     [0x0e] = __no_impl,
     [0x0f] = __no_impl,
-    [0x10] = __ld_bc_imm16,
+    [0x10] = __stop,
     [0x11] = __no_impl,
     [0x12] = __no_impl,
     [0x13] = __no_impl,
@@ -224,7 +237,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x2e] = __no_impl,
     [0x2f] = __no_impl,
     [0x30] = __no_impl,
-    [0x31] = __no_impl,
+    [0x31] = __ld_sp_imm16,
     [0x32] = __no_impl,
     [0x33] = __no_impl,
     [0x34] = __no_impl,
@@ -255,7 +268,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x4d] = __no_impl,
     [0x4e] = __no_impl,
     [0x4f] = __no_impl,
-    [0x50] = __dec_b,
+    [0x50] = __no_impl,
     [0x51] = __no_impl,
     [0x52] = __no_impl,
     [0x53] = __no_impl,
@@ -351,7 +364,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xad] = __no_impl,
     [0xae] = __no_impl,
     [0xaf] = __no_impl,
-    [0xb0] = __no_impl,
+    [0xb0] = __or_a_b,
     [0xb1] = __no_impl,
     [0xb2] = __no_impl,
     [0xb3] = __no_impl,
@@ -370,7 +383,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xc0] = __no_impl,
     [0xc1] = __no_impl,
     [0xc2] = __no_impl,
-    [0xc3] = __inc_a,
+    [0xc3] = __jp_p16,
     [0xc4] = __no_impl,
     [0xc5] = __no_impl,
     [0xc6] = __no_impl,
@@ -380,10 +393,10 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xca] = __no_impl,
     [0xcb] = __no_impl,
     [0xcc] = __call_zf_p16,
-    [0xcd] = __no_impl,
+    [0xcd] = __call_imm16,
     [0xce] = __no_impl,
     [0xcf] = __no_impl,
-    [0xd0] = __no_impl,
+    [0xd0] = __ret_nc,
     [0xd1] = __no_impl,
     [0xd2] = __no_impl,
     [0xd3] = __no_impl,
@@ -397,7 +410,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xdb] = __no_impl,
     [0xdc] = __no_impl,
     [0xdd] = __no_impl,
-    [0xde] = __no_impl,
+    [0xde] = __sbc_a_imm8,
     [0xdf] = __no_impl,
     [0xe0] = __no_impl,
     [0xe1] = __no_impl,
@@ -412,7 +425,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xea] = __no_impl,
     [0xeb] = __no_impl,
     [0xec] = __no_impl,
-    [0xed] = __sbc_a_imm8,
+    [0xed] = __no_impl,
     [0xee] = __no_impl,
     [0xef] = __no_impl,
     [0xf0] = __no_impl,
