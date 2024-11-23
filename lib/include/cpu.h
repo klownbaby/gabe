@@ -165,6 +165,7 @@ callback_t __call_imm16(context_t* ctx);
 callback_t __ret_nc(context_t* ctx);
 callback_t __or_a_b(context_t* ctx);
 callback_t __jp_p16(context_t* ctx);
+callback_t __jp_hl(context_t* ctx);
 callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
 callback_t __ld_sp_imm16(context_t* ctx);
@@ -421,7 +422,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xe6] = __no_impl,
     [0xe7] = __no_impl,
     [0xe8] = __no_impl,
-    [0xe9] = __no_impl,
+    [0xe9] = __jp_hl,
     [0xea] = __no_impl,
     [0xeb] = __no_impl,
     [0xec] = __no_impl,
