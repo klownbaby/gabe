@@ -7,8 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include "cpu.h"
-#include "debug.h"
+#include "emulator.h"
 
 /*
  * @brief Fetch instruction from memory for 
@@ -36,7 +35,7 @@ static inline void fetch(context_t* ctx)
 static inline void decode(context_t* ctx)
 {
     /* Ensure opcode has valid callback mapped */
-    ASSERT(callbacks[ctx->cpu.opcode] != NULL, "Opcode callback exists");
+    ASSERT(callbacks[ctx->cpu.opcode] != NULL);
 }
 
 /*
@@ -46,6 +45,11 @@ static inline void decode(context_t* ctx)
  */
 static inline void execute(context_t* ctx)
 {
+#ifdef SINGLE_STEP
+    /* Let user step into each instruction */
+    STEP;
+#endif /* SINGLE_STEP */
+
     /* Finally, find and call opcode's respective callback */
     LOOKUP_CALLBACK(ctx->cpu.opcode, ctx);
 }
@@ -79,7 +83,7 @@ void cycle(context_t* ctx)
  * @param ctx Emulator context
  * @param nCycles Amount of cycles to run
  */
-void cycle_strict(context_t* ctx, uint8_t cycles)
+void cycle_strict(context_t* ctx, uint64_t cycles)
 {
     /* Decrement cycle count until zero and cycle */
     while (cycles--) cycle(ctx);
@@ -93,7 +97,8 @@ void cycle_strict(context_t* ctx, uint8_t cycles)
 void begin(context_t* ctx)
 {
     /* We want to cycle the cpu until interrupt/exit */
-    while (ctx->running) {
+    while (ctx->running)
+    {
         /* @see cycle() for more info */
         cycle(ctx);
     }

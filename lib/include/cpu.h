@@ -40,13 +40,13 @@
         ctx->cpu.regs.f |= c;          \
     } while (0);
 
-#define FETCH_WORD(val) \
+#define FETCH_AND_SET_WORD(val) \
     do {                              \
         fetch_imm(ctx);               \
-        val = (ctx->cpu.cbyte << 8);  \
+        val = (ctx->cpu.cbyte);      \
                                       \
         fetch_imm(ctx);               \
-        val |= (ctx->cpu.cbyte);      \
+        val |= (ctx->cpu.cbyte << 8);  \
     } while (0);
 
 /*
@@ -132,28 +132,28 @@ OPTIONAL static inline void register_dump(context_t* ctx)
     printf("\n\n** Register Dump **\n\n");
     printf("Current opcode=0x%x\n\n", 
            ctx->cpu.opcode);
-    printf("\t-------------------\n");
-    printf("\t| General Purpose |\n");
-    printf("\t-------------------\n");
-    printf("\tA = %x\n\tF = %x\n\tB = %x\n\tC = %x\n\tD = %x\n\tE = %x\n\tH = %x\n\tL = %x\n",
+    printf("-------------------\n");
+    printf("| General Purpose |\n");
+    printf("-------------------\n");
+    printf("A = %x\nF = %x\nB = %x\nC = %x\nD = %x\nE = %x\nH = %x\nL = %x\n\n",
            a, f, b, c, d, e, h, l);
 
     /* Dispay word-sized 'special' registers */
-    printf("\t-------------------\n");
-    printf("\t|     Special     |\n");
-    printf("\t-------------------\n");
-    printf("\tSP=0x%x\n\tPC=0x%x\n\n", sp, pc);
+    printf("-------------------\n");
+    printf("|     Special     |\n");
+    printf("-------------------\n");
+    printf("SP=0x%x\nPC=0x%x\n\n", sp, pc);
 
     /* Dispay CPU flags */
-    printf("\t-------------------\n");
-    printf("\t|      Flags      |\n");
-    printf("\t-------------------\n");
-    printf("\tZF=%x, NF=%x, HF=%x, CF=%x\n", ZF, NF, HF, CF);
+    printf("-------------------\n");
+    printf("|      Flags      |\n");
+    printf("-------------------\n");
+    printf("ZF=%x, NF=%x, HF=%x, CF=%x\n\n", ZF, NF, HF, CF);
 }
 
 /* Define core cpu functions */
 void cycle(context_t* ctx);
-void cycle_strict(context_t* ctx, uint8_t cycles);
+void cycle_strict(context_t* ctx, uint64_t cycles);
 void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */
@@ -171,6 +171,8 @@ callback_t __ld_bc_imm16(context_t* ctx);
 callback_t __ld_sp_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
 callback_t __inc_bc(context_t* ctx);
+callback_t __ei(context_t* ctx);
+callback_t __di(context_t* ctx);
 callback_t __inc_a(context_t* ctx);
 callback_t __dec_b(context_t* ctx);
 
@@ -432,7 +434,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xf0] = __no_impl,
     [0xf1] = __no_impl,
     [0xf2] = __no_impl,
-    [0xf3] = __no_impl,
+    [0xf3] = __di,
     [0xf4] = __no_impl,
     [0xf5] = __no_impl,
     [0xf6] = __no_impl,
@@ -440,7 +442,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xf8] = __no_impl,
     [0xf9] = __no_impl,
     [0xfa] = __no_impl,
-    [0xfb] = __no_impl,
+    [0xfb] = __ei,
     [0xfc] = __no_impl,
     [0xfd] = __no_impl,
     [0xfe] = __no_impl,

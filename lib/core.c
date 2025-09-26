@@ -7,11 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include <stdlib.h>
-#include "debug.h"
-#include "cart.h"
-#include "core.h"
-#include "cpu.h"
+ #include "emulator.h"
 
 /* Initialize static global emulator context */
 static context_t ctx;
@@ -91,10 +87,10 @@ void gabeinit(char* romfile)
     /* Load cartridge */
     load_cart(&ctx, romfile);
 
-    /* Begin execution */
-    begin(&ctx);
+    ASSERT(ctx.running);
 
-    ASSERT(ctx.running, "Context initialized properly");
+    /* Begin execution */
+    while(ctx.running) cycle(&ctx);
 
     register_dump(&ctx);
 }

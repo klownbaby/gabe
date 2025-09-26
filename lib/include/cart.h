@@ -134,20 +134,16 @@ OPTIONAL static const char* LIC_CODE[0xA5] = {
  */
 #define SHOW_CART_INFO(header) \
     do {                                       \
-        printf("\n--------------------\n");    \
-        printf("\n!!!Cartridge Info!!!\n");    \
-        printf("\n--------------------\n\n");  \
-        printf("\tTitle: %s\n", header.title); \
-        printf("\tNew licensee code: %s\n",    \
+        printf("\nTitle: %s\n", header.title); \
+        printf("New licensee code: %s\n",      \
                LIC_CODE[header.nlic]);         \
-        printf("\tCartridge type: %s\n",       \
+        printf("Cartridge type: %s\n",         \
                ROM_TYPES[header.type]);        \
-        printf("\tROM size: %d\n",             \
+        printf("ROM size: %d\n",               \
                GET_ROM_SIZE(header.rom_size)); \
-        printf("\tRAM size: %d\n\n",           \
+        printf("RAM size: %d\n\n",             \
                header.ram_size);               \
     } while(0)
-
 
 /* Define cartridge load/read functions */
 void read_cart_header(char* filename, cart_header_t* buf);

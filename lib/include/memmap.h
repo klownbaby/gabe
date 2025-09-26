@@ -11,18 +11,10 @@
 
 #include <stdint.h>
 
-
 /* Define common size constants */
 #define _16K 0x3FFF
 #define _8K 0x1FFF
 #define _4K 0xFFF
-
-/*
- * @brief WIP! Macro for mapping addresses
- *
- * @param addr The mapped address region
- */
-#define MAP_ADDR(addr)
 
 /* Define static block of system memory */
 static uint8_t __contiguous[0xFFFF];

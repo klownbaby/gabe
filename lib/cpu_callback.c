@@ -7,9 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include "cpu.h"
-#include "bus.h"
-#include "stack.h"
+ #include "emulator.h"
 
 /*
  * @brief Internal helper function for fetching the
@@ -38,7 +36,7 @@ static inline void call(context_t* ctx, uint16_t addr)
     pushw(ctx, REG(pc));
     
     /* Set program counter to callee address */
-    REG(pc) = addr;
+    REG(pc) = addr - 1;
 }
 
 /*
@@ -109,7 +107,7 @@ callback_t __call_zf_p16(context_t* ctx)
     if (ZF)
     {
         /* Fetch word from memory and store in target address */
-        FETCH_WORD(addr);
+        FETCH_AND_SET_WORD(addr);
 
         /* Finally, jump to callee and align stack */
         call(ctx, addr);
@@ -126,7 +124,7 @@ callback_t __call_imm16(context_t* ctx)
     uint16_t addr = 0;
 
     /* Fetch word from memory and store in target address */
-    FETCH_WORD(addr);
+    FETCH_AND_SET_WORD(addr);
 
     /* Finally, jump to callee and align stack */
     call(ctx, addr);
@@ -172,10 +170,10 @@ callback_t __jp_p16(context_t* ctx)
     uint16_t addr = 0;
 
     /* Fetch word from memory and store in target address */
-    FETCH_WORD(addr);
+    FETCH_AND_SET_WORD(addr);
 
-    /* Finally, jump to address */
-    REG(pc) = addr;
+    /* Finally, jump to address (account for auto PC increment) */
+    REG(pc) = addr - 1;
 }
 
 /*
@@ -201,7 +199,7 @@ callback_t __ld_sp_imm16(context_t* ctx)
     uint16_t addr = 0;
     
     /* Fetch word from memory and store in target address */
-    FETCH_WORD(addr);
+    FETCH_AND_SET_WORD(addr);
 
     /* Finally, set the stack pointer to the new address */
     REG(sp) = addr;
@@ -256,6 +254,26 @@ callback_t __ld_pbc_a(context_t* ctx)
  */
 callback_t __inc_bc(context_t* ctx)
 {
+}
+
+/*
+ * @brief Enable interrupts
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ei(context_t* ctx)
+{
+    ctx->interrupt_enable = 1;
+}
+
+/*
+ * @brief Disable interrupts
+ *
+ * @param ctx Emulator context
+ */
+callback_t __di(context_t* ctx)
+{
+    ctx->interrupt_enable = 0;
 }
 
 /*

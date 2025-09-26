@@ -7,9 +7,19 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include "instruction.h"
+#pragma once
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <unistd.h>
 
-callback_t foo()
-{
-}
+#include "debug.h"
+#include "cart.h"
+#include "core.h"
+#include "cpu.h"
+#include "bus.h"
+#include "types.h"
+#include "utils.h"
+#include "stack.h"

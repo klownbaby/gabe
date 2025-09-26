@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <unistd.h>
 #include "core.h"
 
 /* Levels of debug messages */
@@ -31,27 +30,39 @@
  * @param level Level at which to print (INFO, ERRO, WARN)
  * @param s     String to log with leader
  */
-#define DBG_MSG(level, s)        \
+#define DBG_MSG(level, ...)      \
     do {                         \
         switch(level) {          \
         case INFO:               \
-            printf("[ INFO ]    %s\n", s); \
+            printf("[ INFO ]    "); \
+            printf(__VA_ARGS__); \
+            printf("\n");        \
             break;               \
         case ERRO:               \
             RED;                 \
-            printf("[ ERRO ]    %s\n", s); \
+            printf("[ ERRO ]    "); \
+            printf(__VA_ARGS__); \
+            printf("\n");        \
             RESET;               \
             break;               \
         case WARN:               \
             YELLOW;              \
-            printf("[ WARN ]    %s\n", s); \
+            printf("[ WARN ]    "); \
+            printf(__VA_ARGS__); \
+            printf("\n");        \
             RESET;               \
             break;               \
         case VERB:               \
-            printf("[ VERB ]    %s\n", s); \
+            printf("[ VERB ]    "); \
+            printf(__VA_ARGS__); \
+            printf("\n");        \
             break;               \
         }                        \
     } while (0)
+
+#else /* NOP out DBG_MSG if not in debug mode */
+#define DBG_MSG(level, ...)
+#endif /* DBG */
 
 /*
  * @brief Used for runtime assertions, not unit tests
@@ -59,40 +70,18 @@
  * @param cond Condition to assert TRUE
  * @param s    String to log on assertion pass/fail
  */
-#define ASSERT(cond, s)          \
+#define ASSERT(cond)             \
     do {                         \
-        if (cond) {              \
-            GREEN;               \
-            printf("[  OK  ]    %s\n", s); \
-            RESET;               \
-        } else {                 \
+        if (!(cond)) {           \
             RED;                 \
-            printf("[ FAIL ]    Failed assertion! '%s'", s); \
+            printf("[ FAIL ]    Failed assertion! "#cond); \
             RESET;               \
-            printf(" @ %s:%d\n", __FILE__, __LINE__); \
             teardown(1);         \
         }                        \
     } while (0)
-#else
-#define ASSERT(cond, s)         \
-    do {                        \
-        if (!cond) {            \
-            RED;                \
-            printf("[ FAIL ]    Failed assertion! '%s'", s); \
-            RESET;              \
-            printf(" @ %s:%d\n", __FILE__, __LINE__); \
-            teardown(1);        \
-        }                       \
-    } while (0);
-
-#define DBG_MSG(level, s)
-#endif
 
 /*
- * @brief Assert condition without console output
- * Meant to improve performance of release builds
- *
- * @param cond Condition to assert
+ * @brief Step into an opcode and wait for input
  */
-#define WEAK_ASSERT(cond) do { if (!cond) teardown(1); } while (0)
-
+#define STEP \
+    printf("=> %x\t", ctx->cpu.opcode); getchar();

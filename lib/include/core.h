@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 #define DEBUG
+#define SINGLE_STEP
 
 void gabeinit(char* romfile);
 void teardown(uint8_t status);

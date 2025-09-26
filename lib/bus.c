@@ -7,10 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include <stdio.h>
-#include "bus.h"
-#include "utils.h"
-#include "debug.h"
+#include "emulator.h"
 
 /*
  * @brief Maps address to device/memory region
@@ -25,51 +22,71 @@ uint8_t bus_read(context_t* ctx, uint16_t addr)
     if (addr < MEM_ROM_BANK_END)
     {
         byte = ctx->rom[addr];
+        ++bus_read_stats[ROM_STATS_IDX];
+
         GOTO_SUCCESS;
     } 
     else if (addr < MEM_VRAM_END) 
     {
         byte = ctx->vram[addr];
+        ++bus_read_stats[VRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_EXRAM_END) 
     {
         byte = ctx->exram[addr];
+        ++bus_read_stats[EXRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_WRAM_END) 
     {
         byte = ctx->wram[addr];
+        ++bus_read_stats[WRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_WRAM_BANK_END) 
     {
         /* TODO */
         byte = ctx->wram[addr];
+        ++bus_read_stats[WRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_ECHRAM_END) 
     {
         byte = ctx->echram[addr];
+        ++bus_read_stats[ECHRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_OAM_END) 
     {
         byte = ctx->oam[addr];
+        ++bus_read_stats[OAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_UNUSABLE_END) 
     {
+        ++bus_read_stats[UNUSABLE_STATS_IDX];
+
         GOTO_FAIL;
     }
     else if (addr < MEM_IOREG_END) 
     {
         byte = ctx->io[addr];
+        ++bus_read_stats[IOREG_STATS_IDX];
+
         GOTO_SUCCESS;
     }
     else if (addr < MEM_HRAM_END) 
     {
         byte = ctx->hram[addr];
+        ++bus_read_stats[HRAM_STATS_IDX];
+
         GOTO_SUCCESS;
     }
 

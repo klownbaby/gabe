@@ -25,15 +25,15 @@ TESTROM := ./roms/dmg-acid2.gb
 all: clean build run
 
 clean:
-	rm -rf $(OBJ) $(LOBJ) $(LIB)/$(LIBGABE).a
+	rm -rf $(OBJ) $(LOBJ) $(BIN)/$(LIBGABE).a
 
 lib: 
 	$(CC) -c $(LIBTARGETS) $(LFLAGS)
 	mv *.o $(BIN)/$(LIBGABE)
-	ar -rc $(LIB)/$(LIBGABE).a $(LOBJ)
+	ar -rc $(BIN)/$(LIBGABE).a $(LOBJ)
 
 build: lib
-	$(CC) $(TARGETS) $(CFLAGS) $(LIB)/$(LIBGABE).a
+	$(CC) $(TARGETS) $(CFLAGS) $(BIN)/$(LIBGABE).a
 
 gdb: clean build
 	gdb $(BIN)/$(EMU)

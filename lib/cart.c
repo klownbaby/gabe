@@ -36,7 +36,7 @@ static void read_file(
     fp = fopen(filename, "r");
 
     /* Make sure file exists on disk before reading */
-    ASSERT(fp != NULL, "File exists");
+    ASSERT(fp != NULL);
 
     /* Seek to offset from start of file */
     fseek(fp, offset, SEEK_SET);
@@ -45,7 +45,7 @@ static void read_file(
     read = fread(buf, size, nItems, fp);
 
     /* Make sure status is succussful from file read */
-    ASSERT(read != 0, "File read is successful");
+    ASSERT(read != 0);
     
     /* Make sure to rewind file pointer! */
     rewind(fp);
@@ -112,10 +112,10 @@ void load_cart(context_t* ctx, char* filename)
               GET_ROM_SIZE(ctx->header.rom_size));
 
     /* Ensure rom was successfully loaded into buffer */
-    ASSERT(ctx->rom != NULL, "ROM pointer is not null");
+    ASSERT(ctx->rom != NULL);
 
     /* Make sure checksum validation passes */
-    ASSERT(verify_checksum(&ctx->header, ctx->rom), "Header checksum is valid");
+    ASSERT(verify_checksum(&ctx->header, ctx->rom));
 
     SHOW_CART_INFO(ctx->header);
 }

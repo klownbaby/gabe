@@ -7,9 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include "stack.h"
-#include "bus.h"
-#include "cpu.h"
+#include "emulator.h"
 
 /*
  * @brief Push a byte onto the stack
