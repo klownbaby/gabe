@@ -35,12 +35,6 @@
 #define IOREG_STATS_IDX     8
 #define HRAM_STATS_IDX      9
 
-/* Initialize bus read statistics array */
-static uint64_t bus_read_stats[10] = { 0 };
-
-/* Initialize bus write statistics array */
-static uint64_t bus_write_stats[10] = { 0 };
-
 /*
  * @brief Dump all bus read-related stats
  * for debugging purposes

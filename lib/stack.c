@@ -30,10 +30,10 @@ void pushb(context_t* ctx, uint8_t byte)
 void pushw(context_t* ctx, uint16_t word)
 {
     /* Set LSB to current stack pointer and decrement */
-    bus_write(ctx, REG(sp)--, (word & 0xF0));
+    bus_write(ctx, REG(sp--), ((word & 0xFF00) >> 8));
 
     /* Set MSB to current stack pointer and decrement */
-    bus_write(ctx, REG(sp)--, (word & 0xF));
+    bus_write(ctx, REG(sp--), (word & 0x00FF));
 }
 
 /*
@@ -44,7 +44,7 @@ void pushw(context_t* ctx, uint16_t word)
 uint8_t popb(context_t* ctx)
 {
     /* Get the current byte at SP and increment */
-    return bus_read(ctx, REG(sp++));
+    return bus_read(ctx, ++REG(sp));
 }
 
 /*
@@ -57,10 +57,10 @@ uint16_t popw(context_t* ctx)
     uint16_t value = 0;
 
     /* Get the LSB of the word and increment */
-    value = bus_read(ctx, REG(sp++));
+    value = bus_read(ctx, ++REG(sp));
 
     /* Get the MSB of the word and increment */
-    value |= (bus_read(ctx, REG(sp++)) << 8);
+    value |= (bus_read(ctx, ++REG(sp)) << 8);
 
     /* Return the full word-sized value */
     return value;

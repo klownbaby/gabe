@@ -7,36 +7,20 @@
  * this file. If not, please write to: , or visit :
  */
 
- #include "emulator.h"
+#include "cpu.h"
+#include "emulator.h"
 
-/*
- * @brief Internal helper function for fetching the
- * next imeediate byte from ROM
- *
- * @param ctx Emulator context
- */
-static inline void fetch_imm(context_t* ctx)
-{
-    /* Increment program counter before fetch */
-    INC_PC;
-    
-    /* Get then ext byte and set in cpu context */
-    ctx->cpu.cbyte = bus_read(ctx, REG(pc));
-}
+/* No implementation placeholder */
+callback_t __no_impl(context_t* ctx) 
+{ 
+    /* Dump the unimplemented opcode */
+    DBG_MSG(ERRO, "Opcode %x not implemented!", ctx->cpu.opcode);
 
-/*
- * @brief Internal helper function for handling 
- * generic call instructions
- *
- * @param ctx Emulator context
- */
-static inline void call(context_t* ctx, uint16_t addr)
-{
-    /* Push current PC to stack */
-    pushw(ctx, REG(pc));
-    
-    /* Set program counter to callee address */
-    REG(pc) = addr - 1;
+    /* Dump out registers */
+    register_dump(ctx);
+
+    /* Teardown gabe gracefully */
+    teardown(2); 
 }
 
 /*
@@ -51,6 +35,20 @@ callback_t __nop(context_t* ctx)
 }
 
 /*
+ * @brief Prefix instruction for next opcode
+ *
+ * @param ctx Emulator context
+ */
+callback_t __prefix(context_t* ctx)
+{
+    /* Fetch the next byte and increment PC */
+    FETCH_IMM;
+
+    /* Get associated prefixed callback */
+    LOOKUP_PREFIX_CALLBACK(ctx->cpu.cbyte, ctx);
+}
+
+/*
  * @brief CPU enter low power mode
  * 
  * This is a 2 byte instruction so
@@ -61,8 +59,7 @@ callback_t __nop(context_t* ctx)
  */
 callback_t __stop(context_t* ctx)
 {
-    /* Fetch the next byte and increment PC */
-    fetch_imm(ctx);
+    INC_PC;
 }
 
 /*
@@ -76,7 +73,7 @@ callback_t __sbc_a_imm8(context_t* ctx)
     uint8_t value = 0;
 
     /* Fetch the next byte and increment PC */
-    fetch_imm(ctx);
+    FETCH_IMM;
 
     /* Dereference the current byte */
     value = ctx->cpu.cbyte + CF;
@@ -86,8 +83,7 @@ callback_t __sbc_a_imm8(context_t* ctx)
         REG(a) - value == 0,
         1,
         ((REG(a) & 0xF) - ((ctx->cpu.cbyte & 0xF) - CF) < 0),
-        (REG(a) - (ctx->cpu.cbyte & 0xF) < 0)
-    );
+        (REG(a) - (ctx->cpu.cbyte & 0xF) < 0));
 
     /* Finally, set the value of the A register */
     REG(a) -= value + CF;
@@ -110,7 +106,7 @@ callback_t __call_zf_p16(context_t* ctx)
         FETCH_AND_SET_WORD(addr);
 
         /* Finally, jump to callee and align stack */
-        call(ctx, addr);
+        CALL(addr);
     }
 }
 
@@ -127,7 +123,23 @@ callback_t __call_imm16(context_t* ctx)
     FETCH_AND_SET_WORD(addr);
 
     /* Finally, jump to callee and align stack */
-    call(ctx, addr);
+    CALL(addr);
+}
+
+/*
+ * @brief Return from subroutine if ZF
+ * is set
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ret_z(context_t* ctx)
+{
+    /* Check that carry flag is enabled before returning */
+    if (ZF)
+    {
+        /* Pop return address from top of stack and goto */
+        REG(pc) = popw(ctx);
+    }
 }
 
 /*
@@ -214,11 +226,11 @@ callback_t __ld_sp_imm16(context_t* ctx)
 callback_t __ld_bc_imm16(context_t* ctx)
 {
     /* Little endian so set MSB to C reg */
-    fetch_imm(ctx);
+    FETCH_IMM;
     REG(c) = ctx->cpu.cbyte;
 
     /* Little endian so set LSB to B reg */
-    fetch_imm(ctx);
+    FETCH_IMM;
     REG(b) = ctx->cpu.cbyte;
 }
 
@@ -235,6 +247,23 @@ callback_t __ld_h_phl(context_t* ctx)
 
     /* Dereference byte at phl */
     REG(h) = ctx->rom[phl];
+}
+
+/*
+ * @brief Load the register H with
+ * the byte pointed to at register HL
+ *
+ * @param ctx Emulator context
+ */
+callback_t __ld_hl_imm16(context_t* ctx)
+{
+    /* Little endian so set MSB to L reg */
+    FETCH_IMM;
+    REG(l) = ctx->cpu.cbyte;
+
+    /* Little endian so set LSB to H reg */
+    FETCH_IMM;
+    REG(h) = ctx->cpu.cbyte;
 }
 
 /*
@@ -291,8 +320,7 @@ callback_t __inc_a(context_t* ctx)
         REG(a) == 0,
         0,
         (REG(a) & 0xF),
-        NOT_SET
-    );
+        NOT_SET);
 }
 
 /*
@@ -310,6 +338,5 @@ callback_t __dec_b(context_t* ctx)
         REG(b) == 0,
         1,
         (REG(b) & 0xF) == 0xF,
-        NOT_SET
-    );
+        NOT_SET);
 }

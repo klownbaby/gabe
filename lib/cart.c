@@ -7,11 +7,7 @@
  * this file. If not, please write to: , or visit :
  */
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include "cart.h"
-#include "debug.h"
+ #include "emulator.h"
 
 /*
  * @brief Reads file from disk into buffer one byte

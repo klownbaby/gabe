@@ -15,6 +15,8 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include "constants.h"
+#include "globals.h"
 #include "debug.h"
 #include "cart.h"
 #include "core.h"

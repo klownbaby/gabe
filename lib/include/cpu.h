@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "types.h"
-#include "debug.h"
 
 /* Flag accessors */
 #define ZF (uint8_t)((ctx->cpu.regs.f & 0x4) >> 3)
@@ -40,14 +39,43 @@
         ctx->cpu.regs.f |= c;          \
     } while (0);
 
-#define FETCH_AND_SET_WORD(val) \
+/*
+ * @brief Helper macro for fetching the next
+ * imeediate byte from ROM
+ */
+#define FETCH_IMM      \
+    do {               \
+        INC_PC;        \
+        ctx->cpu.cbyte = bus_read(ctx, REG(pc)); \
+    } while (0)
+
+/*
+ * @brief Helper macro for fetching the
+ * next imeediate word from ROM and setting
+ * a value accordingly
+ *
+ * @param val Value to set
+ */
+#define FETCH_AND_SET_WORD(val)       \
     do {                              \
-        fetch_imm(ctx);               \
-        val = (ctx->cpu.cbyte);      \
+        FETCH_IMM;                    \
+        val = ctx->cpu.cbyte;         \
                                       \
-        fetch_imm(ctx);               \
-        val |= (ctx->cpu.cbyte << 8);  \
-    } while (0);
+        FETCH_IMM;                    \
+        val |= (ctx->cpu.cbyte << 8); \
+    } while (0)
+
+/*
+ * @brief Helper macro for handling 
+ * generic call instructions
+ *
+ * @param addr Address to jump to
+ */
+#define CALL(addr)           \
+    do {                     \
+        pushw(ctx, REG(pc)); \
+        REG(pc) = addr - 1;  \
+    } while (0)
 
 /*
  * @brief Callback locked macro for manipulating 8-bit 
@@ -74,7 +102,17 @@
  * @param opcode Opcode to lookup
  * @param ctx Emulator context
  */
-#define LOOKUP_CALLBACK(opcode, ctx) callbacks[opcode](ctx);
+#define LOOKUP_CALLBACK(opcode, ctx) callbacks[opcode](ctx)
+
+/*
+ * @brief Calls an prefixed opcode's respective callback
+ * based on the function pointer stored in the 
+ * callbacks lookup table
+ *
+ * @param opcode Prefixed opcode to lookup
+ * @param ctx Emulator context
+ */
+#define LOOKUP_PREFIX_CALLBACK(opcode, ctx) prefix_callbacks[opcode](ctx)
 
 /*
  * @brief Construct word sized registers
@@ -157,17 +195,21 @@ void cycle_strict(context_t* ctx, uint64_t cycles);
 void begin(context_t* ctx);
 
 /* Define CPU instruction callbacks */
+callback_t __no_impl(context_t* ctx);
 callback_t __nop(context_t* ctx);
+callback_t __prefix(context_t* ctx);
 callback_t __stop(context_t* ctx);
 callback_t __sbc_a_imm8(context_t* ctx);
 callback_t __call_zf_p16(context_t* ctx);
 callback_t __call_imm16(context_t* ctx);
+callback_t __ret_z(context_t* ctx);
 callback_t __ret_nc(context_t* ctx);
 callback_t __or_a_b(context_t* ctx);
 callback_t __jp_p16(context_t* ctx);
 callback_t __jp_hl(context_t* ctx);
 callback_t __ld_h_phl(context_t* ctx);
 callback_t __ld_bc_imm16(context_t* ctx);
+callback_t __ld_hl_imm16(context_t* ctx);
 callback_t __ld_sp_imm16(context_t* ctx);
 callback_t __ld_pbc_a(context_t* ctx);
 callback_t __inc_bc(context_t* ctx);
@@ -176,21 +218,11 @@ callback_t __di(context_t* ctx);
 callback_t __inc_a(context_t* ctx);
 callback_t __dec_b(context_t* ctx);
 
-/* No implementation placeholder */
-static inline callback_t __no_impl(context_t* ctx) 
-{ 
-    /* Dump the unimplemented opcode */
-    printf("Opcode 0x%x not implemented!\n", ctx->cpu.opcode);
-
-    /* Dump out registers */
-    register_dump(ctx);
-
-    /* Teardown gabe gracefully */
-    teardown(2); 
-}
+/* Define CPU prefix instruction callbacks */
+callback_t __bit_7_phl(context_t* ctx);
 
 /* Instruction callback lookup table */
-__attribute__((used)) static callback_fp_t callbacks[256] = {
+static callback_fp_t callbacks[256] = {
     [0x00] = __nop,
     [0x01] = __ld_bc_imm16,
     [0x02] = __no_impl,
@@ -224,7 +256,7 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0x1e] = __no_impl,
     [0x1f] = __no_impl,
     [0x20] = __no_impl,
-    [0x21] = __no_impl,
+    [0x21] = __ld_hl_imm16,
     [0x22] = __no_impl,
     [0x23] = __no_impl,
     [0x24] = __no_impl,
@@ -391,10 +423,10 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xc5] = __no_impl,
     [0xc6] = __no_impl,
     [0xc7] = __no_impl,
-    [0xc8] = __no_impl,
+    [0xc8] = __ret_z,
     [0xc9] = __no_impl,
     [0xca] = __no_impl,
-    [0xcb] = __no_impl,
+    [0xcb] = __prefix,
     [0xcc] = __call_zf_p16,
     [0xcd] = __call_imm16,
     [0xce] = __no_impl,
@@ -447,4 +479,9 @@ __attribute__((used)) static callback_fp_t callbacks[256] = {
     [0xfd] = __no_impl,
     [0xfe] = __no_impl,
     [0xff] = __no_impl,
+};
+
+/* Prefix instruction callback lookup table (bitwise ops) */
+static callback_fp_t prefix_callbacks[256] = {
+    [0x7e] = __bit_7_phl,
 };

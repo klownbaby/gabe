@@ -10,7 +10,7 @@
  #include "emulator.h"
 
 /* Initialize static global emulator context */
-static context_t ctx;
+context_t ctx;
 
 /*
  * @brief Allocates necessary memory for ROM/RAM
@@ -20,17 +20,16 @@ static context_t ctx;
  */
 static void ctxalloc(context_t* ctx)
 {
-    /* Allocate video RAM on heap */
-    ctx->vram = malloc(EIGHTKB);
-
-    /* Allocate external RAM on heap */
-    ctx->exram = malloc(EIGHTKB);
-
-    /* Allocate echo RAM on heap */
-    ctx->echram = malloc(EIGHTKB);
-
-    /* Allocate work RAM on heap */ 
-    ctx->wram = malloc(FOURKB);
+#ifdef STATIC_ALLOCS
+    /* Create memory map */
+    ctx->rom = __rb16;
+    ctx->vram = __vram;
+    ctx->exram = __extram;
+    ctx->echram = __echo;
+    ctx->wram = __wram;
+    ctx->io = __io_reg;
+#else
+#endif /* STATIC_ALLOCS */
 }
 
 /*
@@ -41,6 +40,8 @@ static void ctxalloc(context_t* ctx)
  */
 static void ctxfree(context_t* ctx)
 {
+#ifdef STATIC_ALLOCS
+#else
     /* Free cartridge ROM allocation */
     free(ctx->rom);
 
@@ -58,6 +59,7 @@ static void ctxfree(context_t* ctx)
 
     /* Set running state to false */
     ctx->running = false;
+#endif /* STATIC_ALLOCS */
 }
 
 /*
@@ -67,6 +69,9 @@ static void ctxfree(context_t* ctx)
  */
 static void ctxinit(context_t* ctx)
 {
+    /* Create memory map */
+    ctxalloc(ctx);
+
     /* Set state to running */
     ctx->running = true;
     ctx->cpu.regs.pc = ROM_ENTRY;
@@ -84,6 +89,7 @@ void gabeinit(char* romfile)
 
     /* Set context to default state */
     ctxinit(&ctx);
+
     /* Load cartridge */
     load_cart(&ctx, romfile);
 

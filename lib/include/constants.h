@@ -7,10 +7,16 @@
  * this file. If not, please write to: , or visit :
  */
 
-#pragma once
-
 #include <stdint.h>
 
-void gabeinit(char* romfile);
-void teardown(uint8_t status);
+/* Debug flags */
+#define DEBUG
+#define SINGLE_STEP
 
+/* Flag to use static allocations for memory map, instead of allocating heap */
+#define STATIC_ALLOCS
+
+/* Define common size constants */
+#define _16K 0x3FFF
+#define _8K  0x1FFF
+#define _4K  0xFFF

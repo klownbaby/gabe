@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "core.h"
-
 /* Levels of debug messages */
 #define INFO    0
 #define ERRO    1
@@ -84,4 +82,4 @@
  * @brief Step into an opcode and wait for input
  */
 #define STEP \
-    printf("=> %x\t", ctx->cpu.opcode); getchar();
+    printf("0x%x => %x\t", REG(pc), ctx->cpu.opcode); getchar();
